@@ -1,0 +1,23 @@
+INFO sip:7003@192.168.1.137:5060 SIP/2.0
+From: <sip:Unknown@192.168.1.121>
+To: <sip:7003@192.168.1.121>
+Call-ID: 22e4c952055b64c678bdcee64f86b7b0@192.168.1.121:5060
+CSeq: 1102 INFO
+Max-Forwards: 70
+Contact: <sip:Unknown@192.168.1.121:5060>
+Content-Type: application/vnd.etsi.aoc+xml
+Content-Length:   405
+
+<?xml version="1.0" encoding="UTF-8"?>
+<aoc xmlns="http://uri.etsi.org/ngn/params/xml/simservs/aoc">
+ <aoc-d>
+  <charging-info>subtotal</charging-info>
+  <recorded-charges>
+   <recorded-currency-units>
+    <currency-id>EUR</currency-id>
+    <currency-amount>0.1</currency-amount>
+   </recorded-currency-units>
+  </recorded-charges>
+  <billing-id>normal-charging</billing-id>
+ </aoc-d>
+</aoc>

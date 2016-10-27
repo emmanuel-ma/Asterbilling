@@ -10,6 +10,26 @@
 require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'asterisk.class.php');
 
 class AsteriskAMI extends Asterisk {
+    var $debug;
+    
+    /**
+    * Constructor
+    *
+    * @param string $config is the name of the config file to parse or a parent agi from which to read the config
+    * @param array $optconfig is an array of configuration vars and vals, stuffed into $this->config['asmanager']
+    * @param boolean $debug enable/disable debug mode
+    */
+    function AsteriskAMI($config=NULL, $optconfig=array(), $debug=true)
+    {
+        parent::Asterisk($config, $optconfig);
+        $this->debug = $debug;
+    }
+    
+    function log($message, $level=1)
+    {
+      if ($this->debug) parent::log($message, $level);
+    }
+    
    function sendText($channel, $message='', $actionid=NULL){
       //$req = "Action: SendText\r\n";
 

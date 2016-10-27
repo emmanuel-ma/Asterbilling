@@ -87,7 +87,31 @@ require_once('manager_login.common.php');
 							<th></th>
 							<td><div align="left"><img id="imgCode" name="imgCode" src=""></div></td>
 						</tr>
-						<tr>
+                                                <tr>
+                                                    <td height="36">&nbsp;</td>
+							<th></th>
+							<td>
+								<div align="left">
+                                                                    <input type="checkbox" value="forever" id="rememberme" name="rememberme" disabled style="visibility: hidden">&nbsp;&nbsp;
+                                                                    <span name="remembermeDiv" id="remembermeDiv" style="visibility: hidden"></span>
+                                                                    <input id="loginButton" name="loginButton" type="submit" value=""/>
+                                                                    <input id="onclickMsg" name="onclickMsg" type="hidden" value=""/>
+								</div>
+							</td>
+						</tr>
+                                                <tr>
+							<td height="36">&nbsp;</td>
+							<th></th>
+							<td></div>
+							</td>
+						</tr>
+                                                <tr>
+							<td height="36">&nbsp;</td>
+							<th></th>
+							<td><div name="forgotDiv" id="forgotDiv" align="left"></div>
+							</td>
+						</tr>
+						<tr style="visibility: hidden">
 							<td height="36">&nbsp;</td>
 							<th><div name="pagestyleDiv" id="pagestyleDiv" align="right"></div></th>
 							<td><div align="left" id="pagestyleSelectDiv">
@@ -98,39 +122,27 @@ require_once('manager_login.common.php');
 								</div>
 							</td>
 						</tr>
-						<tr>
+                                            <tr style="visibility: hidden">
 							<td height="36">&nbsp;</td>
 							<th><div name="locateDiv" id="locateDiv" align="right"></div></th>
 							<td>
 								<div align="left">
 									<SELECT name="locate" id="locate" onchange="setlanguage();" style="width:120px;">
 										<OPTION value="es_MX">Spanish</OPTION>
-										<OPTION value="en_US">English</OPTION>
+<!--										<OPTION value="en_US">English</OPTION>
 										<OPTION value="cn_ZH">简体中文</OPTION>
 										<OPTION value="ch_FR">Français</OPTION>
 										<OPTION value="de_GER">Deutsch</OPTION>
 										<OPTION value="pt_BR">Portugês Brasileiro</OPTION>
+-->
 									</SELECT>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<th></th>
-							<td>
-								<div align="left">
-									<input type="checkbox" value="forever" id="rememberme" name="rememberme">&nbsp;&nbsp;
-									<span name="remembermeDiv" id="remembermeDiv"></span>
-									<input id="loginButton" name="loginButton" type="submit" value=""/>
-									<input id="onclickMsg" name="onclickMsg" type="hidden" value=""/>
 								</div>
 							</td>
 						</tr>
 					</table>
 				</div>
 				<div class="right">&nbsp;</div>
-				<div class="right">&copy; 2004-2011 <a href="http://astercc.org" target="_blank">astercc.org</a></div>
-				<div class="right">version: 0.16 in asterCC 0.21</div>
+				<div name="divCopyright" id="divCopyright" class="right"></div>
 		  </div></form></div>
 	    </div>
 	</body>

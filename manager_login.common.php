@@ -20,7 +20,7 @@ require_once ('include/localization.class.php');
 if (isset($_SESSION['curuser']['country']) )
 	$GLOBALS['locate']=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'login');
 else
-	$GLOBALS['locate']=new Localization('en','US','login');
+	$GLOBALS['locate']=new Localization('es','MX','login');
 
 
 $xajax = new xajax("manager_login.server.php");

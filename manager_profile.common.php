@@ -1,9 +1,9 @@
 <?php
 /*******************************************************************************
-* system.common.php
-* system 参数信息文件
+* manager_profile.common.php
+* manager profile
 
-* system parameter file
+* manager profile parameter file
 
 * 功能描述
 	检查用户权限
@@ -34,18 +34,18 @@ if (!session_id()) session_start();
 setcookie('PHPSESSID', session_id());
 
 
-if ($_SESSION['curuser']['usertype'] != 'admin' ) 
-	header("Location: admin.php");
+if ($_SESSION['curuser']['usertype'] != 'operator' && $_SESSION['curuser']['usertype'] != 'supervisor' && $_SESSION['curuser']['usertype'] != 'hrsupervisor') {
+    header("Location: checkout.php");
+}
 
 
 require_once ("include/xajax.inc.php");
 require_once ('include/localization.class.php');
 
-$GLOBALS['locate']=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'system');
+$GLOBALS['locate']=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'managerprofile');
 
-$xajax = new xajax("system.server.php");
+$xajax = new xajax("manager_profile.server.php");
 
 $xajax->registerFunction("init");
-$xajax->registerFunction("systemAction");
-$xajax->registerFunction("hangupchnnel");
+$xajax->registerFunction("profileAction");
 ?>

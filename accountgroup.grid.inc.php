@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * accountgroup.grid.inc.php
 * accountgroup操作类
@@ -47,9 +47,9 @@ class Customer extends astercrm
 		
 		$sql = "SELECT accountgroup.*, resellername FROM accountgroup LEFT JOIN resellergroup ON resellergroup.id = accountgroup.resellerid ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " WHERE accountgroup.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}
 			
@@ -151,6 +151,7 @@ class Customer extends astercrm
 				."customer_multiple= '".$f['customer_multiple']."', "
 				#."allowcallback='".$f['allowcallback']."', "
 				."allowcallback='no', "
+                                ."receipt_printer= '".$f['receipt_printer']."', "
 				."addtime= now(), "
 				."accountcode='".$f['accountcode']."' "
 				."WHERE id='".$f['groupid']."'";
@@ -186,9 +187,9 @@ class Customer extends astercrm
 		}
 		$sql = "SELECT accountgroup.*, resellername FROM accountgroup LEFT JOIN resellergroup ON resellergroup.id = accountgroup.resellerid WHERE ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " accountgroup.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}
 
@@ -215,9 +216,9 @@ class Customer extends astercrm
 	
 	function &getNumRows($filter = null, $content = null){
 		global $db;
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql = "SELECT COUNT(*) AS numRows FROM accountgroup LEFT JOIN resellergroup ON resellergroup.id = accountgroup.resellerid";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql = "SELECT COUNT(*) AS numRows FROM accountgroup LEFT JOIN resellergroup ON resellergroup.id = accountgroup.resellerid WHERE accountgroup.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}
 		
@@ -244,9 +245,9 @@ class Customer extends astercrm
 
 			$sql = 'SELECT COUNT(*) AS numRows FROM accountgroup LEFT JOIN resellergroup ON resellergroup.id = accountgroup.resellerid WHERE ';
 
-			if ($_SESSION['curuser']['usertype'] == 'admin'){
+			if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 				$sql .= " ";
-			}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+			}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 				$sql .= " accountgroup.resellerid = ".$_SESSION['curuser']['resellerid']." AND ";
 			}
 
@@ -270,9 +271,9 @@ class Customer extends astercrm
 
 		$sql = "SELECT accountgroup.*, resellername FROM accountgroup LEFT JOIN resellergroup ON resellergroup.id = accountgroup.resellerid WHERE ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " accountgroup.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}
 
@@ -296,9 +297,9 @@ class Customer extends astercrm
 
 			$sql = 'SELECT COUNT(*) AS numRows FROM accountgroup LEFT JOIN resellergroup ON resellergroup.id = accountgroup.resellerid WHERE ';
 
-			if ($_SESSION['curuser']['usertype'] == 'admin'){
+			if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 				$sql .= " ";
-			}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+			}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 				$sql .= " accountgroup.resellerid = ".$_SESSION['curuser']['resellerid']." AND ";
 			}
 
@@ -328,8 +329,9 @@ class Customer extends astercrm
 
 		$reselleroptions = '';
 		$reseller = astercrm::getAll('resellergroup');
+                $permissionadmin = ($_SESSION['curuser']['usertype'] == 'technicaladmin') ?'style="display: none;"' :'';
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$reselleroptions .= '<select id="resellerid" name="resellerid">';
 			$reselleroptions .= '<option value="0"></option>';
 			while	($reseller->fetchInto($row)){
@@ -388,7 +390,7 @@ class Customer extends astercrm
 					<td nowrap align="left">'.$locate->Translate("Allow Callback").'</td>
 					<td align="left">
 					<select id="allowcallback" name="allowcallback">';
-		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['allowcallback'] == 'yes'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin' || $_SESSION['curuser']['allowcallback'] == 'yes'){
 			$html .=
 						'
 						<option value="yes">'.$locate->Translate("Yes").'</option>
@@ -404,11 +406,11 @@ class Customer extends astercrm
 					'</select>
 					</td>
 				</tr>-->
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Credit Limit").'</td>
 					<td align="left"><input type="text" id="creditlimit" name="creditlimit" size="25" maxlength="30"></td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Limit Type").'</td>
 					<td align="left">
 					<select id="limittype" name="limittype">
@@ -418,19 +420,19 @@ class Customer extends astercrm
 					</select>
 					</td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Group Billsec Multiple").'</td>
 					<td align="left">
 						<input type="text" id="group_multiple" name="group_multiple" size="6" maxlength="6" value="1.0000">
 					</td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Customer Billsec Multiple").'</td>
 					<td align="left">
 						<input type="text" id="customer_multiple" name="customer_multiple" size="6" maxlength="6" value="1.0000">
 					</td>
 				</tr>
-				<tr>
+                                <tr>
 					<td colspan="2" align="center"><button id="submitButton" onClick=\'xajax_save(xajax.getFormValues("f"));return false;\'>'.$locate->Translate("continue").'</button></td>
 				</tr>
 
@@ -459,8 +461,9 @@ class Customer extends astercrm
 
 		$reselleroptions = '';
 		$reseller = astercrm::getAll('resellergroup');
+                $permissionadmin = ($_SESSION['curuser']['usertype'] == 'technicaladmin') ?'style="display: none;"' :'';
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$reselleroptions .= '<select id="resellerid" name="resellerid">';
 			$reselleroptions .= '<option value="0"></option>';
 			while	($reseller->fetchInto($row)){
@@ -477,7 +480,7 @@ class Customer extends astercrm
 			$reselleroptions .= '</select>';
 
 			//the admin has the reset group button
-			$resetBtnStr = '<input type="button" onclick="if(confirm(&quot;'.$locate->Translate("Make Sure To Reset The Relate Data By Group").'?&quot;)) xajax_resetGroup(&quot;'.$group['id'].'&quot;);return false;" value="'.$locate->Translate("Reset Group").'">';
+			$resetBtnStr = '<input '.$permissionadmin.' type="button" onclick="if(confirm(&quot;'.$locate->Translate("Make Sure To Reset The Relate Data By Group").'?&quot;)) xajax_resetGroup(&quot;'.$group['id'].'&quot;);return false;" value="'.$locate->Translate("Reset Group").'">';
 		}else{
 			while	($reseller->fetchInto($row)){
 				if ($row['id'] == $_SESSION['curuser']['resellerid']){
@@ -493,11 +496,16 @@ class Customer extends astercrm
 			//except the admin,other don't have the reset group button
 			$resetBtnStr = '';
 		}
-		
+                
 
 		$html = '
 			<!-- No edit the next line -->
 			<form method="post" name="f" id="f">
+                        
+                        <input type="hidden" id="sid" name="sid" value="'.session_id().'" />
+                        <input type="hidden" id="pid" name="pid" value="2" />
+                        <input type="hidden" id="printerCommands" name="printerCommands" value="" />
+                            
 			<input type="hidden" id="groupid" name="groupid" value='.$group['id'].'>
 			<table border="1" width="100%" class="adminlist">
 				<tr>
@@ -526,7 +534,7 @@ class Customer extends astercrm
 					<td nowrap align="left">'.$locate->Translate("Allow Callback").'</td>
 					<td align="left">
 					<select id="allowcallback" name="allowcallback">';
-		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['allowcallback'] == 'yes'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin' || $_SESSION['curuser']['allowcallback'] == 'yes'){
 					if ($group['allowcallback'] == "yes"){
 						$html .= '<option value="yes" selected>'.$locate->Translate("Yes").'</option>';
 						$html .= '<option value="no">'.$locate->Translate("No").'</option>';
@@ -542,18 +550,18 @@ class Customer extends astercrm
 					</select>
 					</td>
 				</tr>-->
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Credit Limit").'*</td>
 					<td align="left"><input type="text" id="creditlimit" name="creditlimit" size="25" maxlength="30" value="'.$group['creditlimit'].'"></td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Cur Credit").'</td>
 					<td align="left">
 					<input type="text" id="curcreditshow" name="curcreditshow" size="25" maxlength="100" value="'.$group['curcredit'].'" readonly>
 					<input type="hidden" id="curcredit" name="curcredit" value="'.$group['curcredit'].'">
-				</td>
+                                        </td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Operate").'</td>
 					<td align="left" id="tdOperate">
 						<select id="creditmodtype" name="creditmodtype" onchange="showComment(this)">
@@ -566,7 +574,7 @@ class Customer extends astercrm
 					</td>
 				</tr>
 
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Limit Type").'</td>
 					<td align="left">
 					<select id="limittype" name="limittype">';
@@ -591,16 +599,24 @@ class Customer extends astercrm
 					'</select>
 					</td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Group Billsec Multiple").'</td>
 					<td align="left">
 						<input type="text" id="group_multiple" name="group_multiple" size="6" maxlength="6" value="'.$group['group_multiple'].'">
 					</td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Customer Billsec Multiple").'</td>
 					<td align="left">
 						<input type="text" id="customer_multiple" name="customer_multiple" size="6" maxlength="6" value="'.$group['customer_multiple'].'">
+					</td>
+				</tr>
+                                <tr>
+					<td nowrap align="left">'.$locate->Translate("Receipt Printer").'**</td>
+					<td align="left">
+						<input type="text" id="receipt_printer" name="receipt_printer" size="25" maxlength="50" value="'.$group['receipt_printer'].'">
+                                                <input type="button" onclick=\'javascript:globalDialog.dialog( "open" ); jsWebClientPrint.getPrinters();\' value="...">
+                                                <input type="button" onclick=\'javascript:printTestReceipt("f");\' value="'.$locate->Translate("Print Test Receipt").'">
 					</td>
 				</tr>
 				<tr>
@@ -608,12 +624,12 @@ class Customer extends astercrm
 					<td align="left"><input type="radio" id="grouplogostatus" name="grouplogostatus" value="1" ';
 				if($group['grouplogostatus'] == 1) $html .= 'checked';
 				$html .=
-				'>enable&nbsp;&nbsp;<input type="radio" id="grouplogostatus" name="grouplogostatus" value="0"';
+				'>'.$locate->Translate("Enable").'&nbsp;&nbsp;<input type="radio" id="grouplogostatus" name="grouplogostatus" value="0"';
 				if($group['grouplogostatus'] == 0) $html .= 'checked';
-				$html .= '>disable</td>
+				$html .= '>'.$locate->Translate("Disable").'</td>
 				</tr>
 				</table>
-				</form>';
+                                </form>';
 
 				$html .= 
 				'<form action="upload.php" method="post" enctype="multipart/form-data" name="formLogoUpload" id="formLogoUpload" target="iframeForUpload">
@@ -633,8 +649,8 @@ class Customer extends astercrm
 			
 
 		$html .= '				
-				*'.$locate->Translate("Obligatory Fields").'
-				';
+				*'.$locate->Translate("Obligatory Fields").'<br/>
+				**<a href="http://www.neodynamic.com/downloads/wcpp" target="_blank">'.$locate->Translate("Must have WCPP installed on each client machine").'</a>';
 
 		return $html;
 	}

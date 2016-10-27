@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * profile.php
 
@@ -54,11 +54,11 @@ require_once('profile.common.php');
 				if(confirm("Are sure to payment?")){
 
 					if(typeof(xajax.$('amount')) == 'undefined'){
-						alert("<?echo $locate->Translate('Please select amount');?>");
+						alert("<?php echo $locate->Translate('Please select amount');?>");
 						return false;
 					}else{
 						if(xajax.$('amount').value == ''){
-							alert("<?echo $locate->Translate('Please select amount');?>");
+							alert("<?php echo $locate->Translate('Please select amount');?>");
 							return false;
 						}
 					}

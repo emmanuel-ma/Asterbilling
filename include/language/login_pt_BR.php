@@ -1,4 +1,4 @@
-<?
+<?php
 $user_title="Nome de Usuário ";
 $manager_title="Administração ";
 

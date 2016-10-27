@@ -1,4 +1,4 @@
-<?
+<?php
 //En for mangaer
 $add_account = "New account record added";
 $update_rec = "A record has been updated";

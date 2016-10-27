@@ -1,4 +1,4 @@
-<?
+<?php
 $like = "Como";
 $src = "Origen";
 $dst = "Destino";

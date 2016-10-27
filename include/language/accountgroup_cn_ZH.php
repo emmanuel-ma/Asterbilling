@@ -1,4 +1,4 @@
-<?
+<?php
 $reseller = "代理商";
 $reseller_name = "代理商名称";
 $group_name = "组名称";

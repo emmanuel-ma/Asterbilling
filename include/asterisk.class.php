@@ -36,7 +36,7 @@ class Asterisk extends AGI_AsteriskManager{
 
 
 		if ($arrayPara['Variable'] != '')
-			foreach ( split("\|",$arrayPara['Variable']) as $strVar)
+			foreach ( preg_split("/\|/",$arrayPara['Variable']) as $strVar)
 				$callfile = $callfile."SetVar: $strVar\r\n";
 
 
@@ -136,7 +136,7 @@ class Asterisk extends AGI_AsteriskManager{
 		$peer = $myAsterisk->Command($type." show peer ".$name);	
 		$myAsterisk->disconnect();
 		$peer = $peer['data'];
-		$peer =split(chr(10),$peer);
+		$peer = preg_split('/'.chr(10).'/',$peer);
 		return $peer[31];
 	}
 
@@ -148,7 +148,7 @@ class Asterisk extends AGI_AsteriskManager{
 		$peer = $myAsterisk->Command($type." show peer ".$name);	
 		$myAsterisk->disconnect();
 		$peer = $peer['data'];
-		$peer =split(chr(10),$peer);
+		$peer = preg_split('/'.chr(10).'/',$peer);
 		return $peer[37];
 	}
 

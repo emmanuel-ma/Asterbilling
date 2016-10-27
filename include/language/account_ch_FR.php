@@ -1,11 +1,11 @@
-<?
+<?php
 //En for mangaer
 $add_account = "Un nouveau compte a ete cree";
-$update_rec = "Le compte a ete mis à jour";
-$rec_cannot_update = "Le compte n'a pas pu être mis à jour";
-$rec_cannot_insert = "Le compte n'a pas pu être insere";
+$update_rec = "Le compte a ete mis ï¿½ jour";
+$rec_cannot_update = "Le compte n'a pas pu ï¿½tre mis ï¿½ jour";
+$rec_cannot_insert = "Le compte n'a pas pu ï¿½tre insere";
 $delete_rec = "Compte supprime";
-$rec_cannot_delete = "Le compte n'a pas pu être supprime";
+$rec_cannot_delete = "Le compte n'a pas pu ï¿½tre supprime";
 $username = "Nom d'utilisateur ";
 $password = "Mot de passe ";
 $extension = "Extension ";

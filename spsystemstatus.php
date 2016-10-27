@@ -76,11 +76,11 @@ function addDiv(containerId,divId,creditLimit,num,status,displayname,customereab
 	div.innerHTML += "<table width=\"500\" class=\"curcall\">" +
 																"<tbody id=\"" + divId + "-tbody\">" +
 																"<tr>" +
-																"<th style=\"width:70px;\"><?echo $locate->Translate("Phone");?></th>" +
-																"<th style=\"width:50px;\"><?echo $locate->Translate("Sec");?></th>" +
-																"<th style=\"width:50px;\"><?echo $locate->Translate("Price");?></th>" +
-																"<th style=\"width:100px;\"  nowrap><?echo $locate->Translate("Start At");?></th>" +
-																"<th style=\"width:100px;\"><?echo $locate->Translate("Rate");?></th>" +
+																"<th style=\"width:70px;\"><?php echo $locate->Translate("Phone");?></th>" +
+																"<th style=\"width:50px;\"><?php echo $locate->Translate("Sec");?></th>" +
+																"<th style=\"width:50px;\"><?php echo $locate->Translate("Price");?></th>" +
+																"<th style=\"width:100px;\"  nowrap><?php echo $locate->Translate("Start At");?></th>" +
+																"<th style=\"width:100px;\"><?php echo $locate->Translate("Rate");?></th>" +
 																"</tr>" +
 																"<tr id=\"trTitle\" class=\"curchannel\">" +
 																"<td id=\"" + divId + "-phone\">&nbsp;</td>" +
@@ -89,10 +89,10 @@ function addDiv(containerId,divId,creditLimit,num,status,displayname,customereab
 																"<td id=\"" + divId + "-startat\" nowrap> </td>" +
 																"<td id=\"" + divId + "-rate\">" +
 "<div style=\"display: none;\">" +
-"<span id=\"" + divId + "-connectcharge\">-</span> <?echo $locate->Translate("for first");?> <span id=\"" + divId + "-initblock\">-</span> <?echo $locate->Translate("seconds");?> " + 
-"<span id=\"" + divId + "-rateinitial\">-</span> <?echo $locate->Translate("per");?> <span id=\"" + divId + "-billingblock\">-</span> <?echo $locate->Translate("seconds");?> " +
+"<span id=\"" + divId + "-connectcharge\">-</span> <?php echo $locate->Translate("for first");?> <span id=\"" + divId + "-initblock\">-</span> <?php echo $locate->Translate("seconds");?> " + 
+"<span id=\"" + divId + "-rateinitial\">-</span> <?php echo $locate->Translate("per");?> <span id=\"" + divId + "-billingblock\">-</span> <?php echo $locate->Translate("seconds");?> " +
 "</div>" +
-"<?echo $locate->Translate("total");?>: <span id=\"" + divId + "-totalsec\">-</span> <?echo $locate->Translate("seconds");?>" +
+"<?php echo $locate->Translate("total");?>: <span id=\"" + divId + "-totalsec\">-</span> <?php echo $locate->Translate("seconds");?>" +
 																"</td>" +
 																"</tr>" +
 																"<tr id=\"trTitle-legb\" class=\"curchannel\">" +
@@ -102,8 +102,8 @@ function addDiv(containerId,divId,creditLimit,num,status,displayname,customereab
 																"<td id=\"" + divId + "-legb-startat\" nowrap> </td>" +
 																"<td id=\"" + divId + "-legb-rate\">" +
 "<div style=\"display: none;\">" +
-"<span id=\"" + divId + "-legb-connectcharge\">-</span> <?echo $locate->Translate("for first");?> <span id=\"" + divId + "-legb-initblock\">-</span> <?echo $locate->Translate("seconds");?> " + 
-"<span id=\"" + divId + "-legb-rateinitial\">-</span> <?echo $locate->Translate("per");?> <span id=\"" + divId + "-legb-billingblock\">-</span> <?echo $locate->Translate("seconds");?> " +
+"<span id=\"" + divId + "-legb-connectcharge\">-</span> <?php echo $locate->Translate("for first");?> <span id=\"" + divId + "-legb-initblock\">-</span> <?php echo $locate->Translate("seconds");?> " + 
+"<span id=\"" + divId + "-legb-rateinitial\">-</span> <?php echo $locate->Translate("per");?> <span id=\"" + divId + "-legb-billingblock\">-</span> <?php echo $locate->Translate("seconds");?> " +
 "</div>" +
 																"</td>" +
 																"</tr>" +
@@ -126,8 +126,8 @@ function addDiv(containerId,divId,creditLimit,num,status,displayname,customereab
 		// add customer div
 		var div = document.createElement("div");
 		div.className = "lable";	
-		div.innerHTML += "&nbsp;<span id=\"" + divId + "-spanCustomers\"><?echo $locate->Translate("Member");?></span>: <input id=\"" + divId + "-CustomerName\" name=\"" + divId + "-CustomerName\" type=\"text\" value=\"\" size=\"9\" maxlength=\"20\">";	
-		div.innerHTML += " <input type=\"button\" value=\"<?echo $locate->Translate("Update");?>\" id=\"" + divId + "-btnCustomer\" name=\"" + divId + "-btnCustomer\" onclick=\"xajax_checkCustomer(document.getElementById('" + divId + "-CustomerName').value,'" + divId + "')\">";
+		div.innerHTML += "&nbsp;<span id=\"" + divId + "-spanCustomers\"><?php echo $locate->Translate("Member");?></span>: <input id=\"" + divId + "-CustomerName\" name=\"" + divId + "-CustomerName\" type=\"text\" value=\"\" size=\"9\" maxlength=\"20\">";	
+		div.innerHTML += " <input type=\"button\" value=\"<?php echo $locate->Translate("Update");?>\" id=\"" + divId + "-btnCustomer\" name=\"" + divId + "-btnCustomer\" onclick=\"xajax_checkCustomer(document.getElementById('" + divId + "-CustomerName').value,'" + divId + "')\">";
 		divContainer.appendChild(div);
 	}
 
@@ -136,10 +136,10 @@ function addDiv(containerId,divId,creditLimit,num,status,displayname,customereab
 	div.className = "lable";
 	if (creditLimit == ""){
 		div.innerHTML += "<input type=\"checkbox\" id=\"" + divId + "-ckbCredit\" name=\"" + divId + "-ckbCredit\" value=\"" + divId + "\" onclick=\"ckbCreditOnClick(this);\">";
-		div.innerHTML += "<span id=\"" + divId + "-spanLimit\"><?echo $locate->Translate("Limit");?></span>: <input id=\"" + divId + "-iptCredit\" name=\"" + divId + "-iptCredit\" type=\"text\" value=\"\" size=\"9\" maxlength=\"7\" onKeyUp=\"filedFilter(document.getElementById('" + divId + "-iptCredit'),'numeric');\" >";
+		div.innerHTML += "<span id=\"" + divId + "-spanLimit\"><?php echo $locate->Translate("Limit");?></span>: <input id=\"" + divId + "-iptCredit\" name=\"" + divId + "-iptCredit\" type=\"text\" value=\"\" size=\"9\" maxlength=\"7\" onKeyUp=\"filedFilter(document.getElementById('" + divId + "-iptCredit'),'numeric');\" >";
 	}else{
 		div.innerHTML += "<input type=\"checkbox\" id=\"" + divId + "-ckbCredit\" name=\"" + divId + "-ckbCredit\" value=\"" + divId + "\" checked onclick=\"ckbCreditOnClick(this);\">";
-		div.innerHTML += "<span id=\"" + divId + "-spanLimit\"><?echo $locate->Translate("Limit");?></span>: <input id=\"" + divId + "-iptCredit\" name=\"" + divId + "-iptCredit\" type=\"text\" value=\"" + creditLimit + "\" size=\"9\" maxlength=\"7\" readonly>";
+		div.innerHTML += "<span id=\"" + divId + "-spanLimit\"><?php echo $locate->Translate("Limit");?></span>: <input id=\"" + divId + "-iptCredit\" name=\"" + divId + "-iptCredit\" type=\"text\" value=\"" + creditLimit + "\" size=\"9\" maxlength=\"7\" readonly>";
 	}
 	//divContainer.appendChild(div);	
 
@@ -148,9 +148,9 @@ function addDiv(containerId,divId,creditLimit,num,status,displayname,customereab
 	//div.className = "lable";
 	div.innerHTML += "<input type=\"hidden\" id=\"divList[]\" name=\"divList[]\" value=\"" + divId + "\">";
 	if (status == -1){
-		div.innerHTML += "<input checked type=\"checkbox\" id=\"" + divId+ "-ckbLock\" name=\"" + divId+ "-ckbLock\"  onclick=\"setStatus('" + divId + "',this.checked);\"><span id=\"" + divId + "-lock\" style=\"background-color: red;\"><?echo $locate->Translate("Lock");?></span> ";
+		div.innerHTML += "<input checked type=\"checkbox\" id=\"" + divId+ "-ckbLock\" name=\"" + divId+ "-ckbLock\"  onclick=\"setStatus('" + divId + "',this.checked);\"><span id=\"" + divId + "-lock\" style=\"background-color: red;\"><?php echo $locate->Translate("Lock");?></span> ";
 	}else{
-		div.innerHTML += "<input type=\"checkbox\" id=\"" + divId+ "-ckbLock\" name=\"" + divId+ "-ckbLock\" value=\"" + divId + "\" onclick=\"setStatus('" + divId + "',this.checked);\"><span id=\"" + divId + "-lock\"><?echo $locate->Translate("Lock");?></span> ";
+		div.innerHTML += "<input type=\"checkbox\" id=\"" + divId+ "-ckbLock\" name=\"" + divId+ "-ckbLock\" value=\"" + divId + "\" onclick=\"setStatus('" + divId + "',this.checked);\"><span id=\"" + divId + "-lock\"><?php echo $locate->Translate("Lock");?></span> ";
 	}
 
 	divContainer.appendChild(div);
@@ -165,10 +165,10 @@ function addDiv(containerId,divId,creditLimit,num,status,displayname,customereab
 	div.innerHTML += '<input type="hidden" size="4" id="' + divId + '-billsec" name="' + divId + '-billsec" value="0">';
 	div.innerHTML += '<input type="hidden" size="4" id="' + divId + '-legb-billsec" name="' + divId + '-billsec" value="0">';
 	div.innerHTML += '<input type="hidden" size="4" id="' + divId + '-limitstatus" name="' + divId + '-limitstatus" value="">';
-	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"hangupOnClick('" + divId + "');return false;\"><?echo $locate->Translate("Hangup");?></a>";
-	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"btnClearOnClick('" + divId + "','');return false;\"><?echo $locate->Translate("Clear");?></a>";
-	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"btnCDROnClick('" + divId + "');return false;\"><?echo $locate->Translate("Cdr");?></a>";
-	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"btnReceiptOnClick('"+divId+"',"+customereable+");return false;\"><?echo $locate->Translate("Receipt");?></a>";
+	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"hangupOnClick('" + divId + "');return false;\"><?php echo $locate->Translate("Hangup");?></a>";
+	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"btnClearOnClick('" + divId + "','');return false;\"><?php echo $locate->Translate("Clear");?></a>";
+	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"btnCDROnClick('" + divId + "');return false;\"><?php echo $locate->Translate("Cdr");?></a>";
+	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"btnReceiptOnClick('"+divId+"',"+customereable+");return false;\"><?php echo $locate->Translate("Receipt");?></a>";
 
 	divContainer.appendChild(div);
 
@@ -211,9 +211,9 @@ function addSimpleDiv(containerId,divId,creditLimit,num,status,displayname){
 	div.innerHTML += "<table class=\"peerstatus\" width=\"400\" >" +
 																"<tbody id=\"" + divId + "-tbody\">" +
 																"<tr>" +
-																"<th style=\"width:70px;\"><?echo $locate->Translate("Phone");?></th>" +
-																"<th style=\"width:50px;\"><?echo $locate->Translate("Sec");?></th>" +
-																"<th style=\"width:100px;\"  nowrap><?echo $locate->Translate("Start At");?></th>" +
+																"<th style=\"width:70px;\"><?php echo $locate->Translate("Phone");?></th>" +
+																"<th style=\"width:50px;\"><?php echo $locate->Translate("Sec");?></th>" +
+																"<th style=\"width:100px;\"  nowrap><?php echo $locate->Translate("Start At");?></th>" +
 																"</tr>" +
 																"<tr id=\"trTitle\" class=\"curchannel\">" +
 																"<td id=\"" + divId + "-phone\">&nbsp;</td>" +
@@ -232,9 +232,9 @@ function addSimpleDiv(containerId,divId,creditLimit,num,status,displayname){
 	div.className = "lable";
 	div.innerHTML += "<input type=\"hidden\" id=\"divList[]\" name=\"divList[]\" value=\"" + divId + "\">";
 	if (status == -1){
-		div.innerHTML += "<input checked type=\"checkbox\" id=\"" + divId+ "-ckbLock\" name=\"" + divId+ "-ckbLock\"  onclick=\"setStatus('" + divId + "',this.checked);\"><span id=\"" + divId + "-lock\" style=\"background-color: red;\"><?echo $locate->Translate("Lock");?></span> ";
+		div.innerHTML += "<input checked type=\"checkbox\" id=\"" + divId+ "-ckbLock\" name=\"" + divId+ "-ckbLock\"  onclick=\"setStatus('" + divId + "',this.checked);\"><span id=\"" + divId + "-lock\" style=\"background-color: red;\"><?php echo $locate->Translate("Lock");?></span> ";
 	}else{
-		div.innerHTML += "<input type=\"checkbox\" id=\"" + divId+ "-ckbLock\" name=\"" + divId+ "-ckbLock\" value=\"" + divId + "\" onclick=\"setStatus('" + divId + "',this.checked);\"><span id=\"" + divId + "-lock\"><?echo $locate->Translate("Lock");?></span> ";
+		div.innerHTML += "<input type=\"checkbox\" id=\"" + divId+ "-ckbLock\" name=\"" + divId+ "-ckbLock\" value=\"" + divId + "\" onclick=\"setStatus('" + divId + "',this.checked);\"><span id=\"" + divId + "-lock\"><?php echo $locate->Translate("Lock");?></span> ";
 	}
 
 	div.innerHTML += "<input type=\"hidden\" id=\"" + divId + "-channel\" name=\"" + divId + "-channel\" value=''>";
@@ -244,7 +244,7 @@ function addSimpleDiv(containerId,divId,creditLimit,num,status,displayname){
 	div.innerHTML += '<input type="hidden" size="4" id="' + divId + '-billsec" name="' + divId + '-billsec" value="0">';
 	div.innerHTML += '<input type="hidden" size="4" id="' + divId + '-legb-billsec" name="' + divId + '-billsec" value="0">';
 	div.innerHTML += '<input type="hidden" size="4" id="' + divId + '-limitstatus" name="' + divId + '-limitstatus" value="">';
-	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"hangupOnClick('" + divId + "');return false;\"><?echo $locate->Translate("Hangup");?></a>";
+	div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"hangupOnClick('" + divId + "');return false;\"><?php echo $locate->Translate("Hangup");?></a>";
 	//div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"btnClearOnClick('" + divId + "');return false;\">Clear</a>";
 	//div.innerHTML += "&nbsp;&nbsp;<a href=\"?\" onclick=\"btnCDROnClick('" + divId + "');return false;\">Cdr</a>";
 	divContainer.appendChild(div);
@@ -260,7 +260,7 @@ function ckbCreditOnClick(objCkb){
 	}
 
 	if (objCkb.checked){
-		if (confirm("<?echo $locate->Translate("select OK to enable credit limit");?>")){
+		if (confirm("<?php echo $locate->Translate("select OK to enable credit limit");?>")){
 			document.getElementById(objCkb.value+'-iptCredit').readOnly = true;
 			objCkb.checked = true;
 			document.getElementById(objCkb.value + "-limitstatus").value = "";
@@ -271,7 +271,7 @@ function ckbCreditOnClick(objCkb){
 			objCkb.checked = false;
 		}
 	}else{
-		if (confirm("<?echo $locate->Translate("select OK to disable credit limit");?>")){
+		if (confirm("<?php echo $locate->Translate("select OK to disable credit limit");?>")){
 			document.getElementById(objCkb.value+'-iptCredit').readOnly = false;
 			objCkb.checked = false;
 			channel = document.getElementById(objCkb.value+'-channel').value;
@@ -295,12 +295,12 @@ function appendTr(tbodyId,aryValues){
 	// caller id
     var td = document.createElement("td");
 	if(trim(aryValues["billsec"]) == 0){
-		td.innerHTML = "<acronym title=\"" + "<?echo $locate->Translate("Destination");?>:" + trim(aryValues["destination"]) + "(" + "<?echo $locate->Translate("Rate");?>:" + trim(aryValues["rate"]) + ")" + "\"><img src='images/noanswer.gif'>" + trim(aryValues["dst"]) + "</acronym>";
+		td.innerHTML = "<acronym title=\"" + "<?php echo $locate->Translate("Destination");?>:" + trim(aryValues["destination"]) + "(" + "<?php echo $locate->Translate("Rate");?>:" + trim(aryValues["rate"]) + ")" + "\"><img src='images/noanswer.gif'>" + trim(aryValues["dst"]) + "</acronym>";
 	}else{
 		if(trim(aryValues["direction"]) == 'inbound')
-			td.innerHTML = "<acronym title=\"" + "<?echo $locate->Translate("Destination");?>:" + trim(aryValues["destination"]) + "(" + "<?echo $locate->Translate("Rate");?>:" + trim(aryValues["rate"]) + ")" + "\"><img src='images/inbound.gif'>" + trim(aryValues["dst"]) + "</acronym>";
+			td.innerHTML = "<acronym title=\"" + "<?php echo $locate->Translate("Destination");?>:" + trim(aryValues["destination"]) + "(" + "<?php echo $locate->Translate("Rate");?>:" + trim(aryValues["rate"]) + ")" + "\"><img src='images/inbound.gif'>" + trim(aryValues["dst"]) + "</acronym>";
 		else
-			td.innerHTML = "<acronym title=\"" + "<?echo $locate->Translate("Destination");?>:" + trim(aryValues["destination"]) + "(" + "<?echo $locate->Translate("Rate");?>:" + trim(aryValues["rate"]) + ")" + "\"><img src='images/outbound.gif'>" + trim(aryValues["dst"]) + "</acronym>";
+			td.innerHTML = "<acronym title=\"" + "<?php echo $locate->Translate("Destination");?>:" + trim(aryValues["destination"]) + "(" + "<?php echo $locate->Translate("Rate");?>:" + trim(aryValues["rate"]) + ")" + "\"><img src='images/outbound.gif'>" + trim(aryValues["dst"]) + "</acronym>";
 	}
 //	td.innerHTML = trim(aryValues["dst"]);
 //	td.style.width = "70px";
@@ -350,7 +350,7 @@ function appendTr(tbodyId,aryValues){
 
 function btnClearOnClick(divId,payment){
 
-	if (!confirm("<?echo $locate->Translate("Are you sure to clear this booth");?>"+"?'"))
+	if (!confirm("<?php echo $locate->Translate("Are you sure to clear this booth");?>"+"?'"))
 	{
 		return false;
 	}
@@ -361,12 +361,12 @@ function btnClearOnClick(divId,payment){
 function setStatus(trId,status){
 	if (status)
 	{
-		if (confirm("<?echo $locate->Translate("Are you sure to lock booth");?>" + trId + "?"))
+		if (confirm("<?php echo $locate->Translate("Are you sure to lock booth");?>" + trId + "?"))
 		{
 			xajax_setStatus(trId,-1);
 		}
 	}else{
-		if (confirm("<?echo $locate->Translate("Are you sure to unlock booth");?>" + trId + "?"))
+		if (confirm("<?php echo $locate->Translate("Are you sure to unlock booth");?>" + trId + "?"))
 		{
 			xajax_setStatus(trId,1);
 		}
@@ -391,7 +391,7 @@ function showCallshopStatus(){
 }
 
 function hangupOnClick(trId){
-	if (confirm("<?echo $locate->Translate("Are you sure to hangup this call");?>"+"?")){
+	if (confirm("<?php echo $locate->Translate("Are you sure to hangup this call");?>"+"?")){
 		//alert(document.getElementById( trId + '-channel').value);
 		//return false;
 //		"Local/84350822-legb-channel"
@@ -402,7 +402,7 @@ function hangupOnClick(trId){
 }
 
 function removeLocalDiv(divId){
-	if (confirm("<?echo $locate->Translate("Are you sure to remove this box");?>"+"?"))
+	if (confirm("<?php echo $locate->Translate("Are you sure to remove this box");?>"+"?"))
 	{
 		oDiv = document.getElementById(divId + '-divContainer');
 		oContainer =  document.getElementById('divMainContainer');
@@ -435,9 +435,9 @@ function searchRate(){
 		
 		<div id="divMain" style="clear:both; width:100%;">
 		<?php if($config['system']['sysstatus_new_window'] != 'yes'){?>
-		<div id="divPanel" name="divPanel" class="divPanel" style="z-index:999;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="systemstatus.php" target="">&nbsp;&nbsp;<?echo $locate->Translate("systemstatus");?>&nbsp;&nbsp;</a></div>
-		<?}?>
-	<?if ($_SESSION['curuser']['allowcallback'] == 'yes'){?>
+		<div id="divPanel" name="divPanel" class="divPanel" style="z-index:999;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="systemstatus.php" target="">&nbsp;&nbsp;<?php echo $locate->Translate("systemstatus");?>&nbsp;&nbsp;</a></div>
+		<?php }?>
+	<?php if ($_SESSION['curuser']['allowcallback'] == 'yes'){?>
 		<div id="divCallback" name="divCallback" class="formDiv drsElement" style="left: 450px; top: 50px;visibility:visible;width:250px;">
 			<table width="100%" border="1" align="center" class="adminlist" >
 			<tr class="drsMoveHandle">
@@ -447,24 +447,24 @@ function searchRate(){
 			</tr>
 			<tr >
 			<td>
-				<fieldset><legend><?echo $locate->Translate("Callback");?></legend>
+				<fieldset><legend><?php echo $locate->Translate("Callback");?></legend>
 			<form action="" method="post">
 			<table border="1" width="100%" class="adminlist">
 				<tr>
-					<td><?echo $locate->Translate("Ori");?>:</td>
+					<td><?php echo $locate->Translate("Ori");?>:</td>
 					<td><input type="text" size="17" maxlength="17" id="iptLegB" name="iptLegB"></td>
 				</tr>
 				<tr>
-					<td><?echo $locate->Translate("Dest");?>:</td>
+					<td><?php echo $locate->Translate("Dest");?>:</td>
 					<td><input type="text" size="17" maxlength="17" id="iptLegA" name="iptLegA"></td>
 				</tr>
 				<tr>
-					<td><?echo $locate->Translate("Credit");?>:</td>
+					<td><?php echo $locate->Translate("Credit");?>:</td>
 					<td><input type="text" size="6" maxlength="6" id="creditLimit" name="creditLimit"></td>
 				</tr>
 				<tr>
 					<td colspan=2>
-						<input type="button" onclick="invite();return false;" value="<?echo $locate->Translate("Start");?>" >
+						<input type="button" onclick="invite();return false;" value="<?php echo $locate->Translate("Start");?>" >
 					</td>
 				</tr>
 			</table>
@@ -473,7 +473,7 @@ function searchRate(){
 			</td></tr>
 			</table>
 		</div>
-	<?}?>
+	<?php }?>
 		<form method="post" id="peerStatus">
 			<div class="container" id="divMainContainer">
 			</div>

@@ -1,4 +1,4 @@
-<?
+<?php
 $select_rate_table = "select_rate_table";
 $select_table = "select_table";
 $myrate = "myrate";

@@ -1,4 +1,4 @@
-<?
+<?php
 $phone = "Telefone";
 $sec = "Segundos";
 $price = "Preço";

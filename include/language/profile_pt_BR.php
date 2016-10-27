@@ -1,4 +1,4 @@
-<?
+<?php
 //English for profile
 $reseller_infomation = "Informação do Distribuidor";
 $reseller_name = "Nome do Distribuidor";

@@ -1,4 +1,4 @@
-<?
+<?php
 $discount	= "Descuento";
 $amount = "Cantidad";
 $create_time = "Tiempo de Creacion";

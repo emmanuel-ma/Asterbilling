@@ -260,7 +260,7 @@ function submitForm($aFormValues){
 				$objResponse->addScript('init();');
 				return $objResponse;
 			}
-			if (!ereg("[0-9]+",trim($order[$j]))){ //是否为数字
+			if (!preg_match("/[0-9]+/",trim($order[$j]))){ //是否为数字
 				$objResponse->addAlert($locate->Translate('field_must_digits'));
 				$objResponse->addScript('init();');
 				return $objResponse;

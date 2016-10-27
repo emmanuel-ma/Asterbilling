@@ -1,6 +1,8 @@
-<?
+<?php
 $user_title="User Login ";
 $manager_title="Manager Login ";
+$no_pass_callshop_validation="The callshop is not configure for this PC, please contact to your administrator"; //added 2014/11/17 by ema
+$forgot_password_option="Click here, if you forgot your password"; //added 2014/11/17 by ema
 $username="Username ";
 $password="Password ";
 $submit="Submit ";

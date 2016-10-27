@@ -1,4 +1,4 @@
-<?
+<?php
 $rate = "Tarif";
 $report = "Bericht";
  

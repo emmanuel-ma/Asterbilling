@@ -1,4 +1,4 @@
-<?
+<?php
 //En for mangaer
 $add_account = "Registro efetuado com sucesso";
 $update_rec = "Um registro foi atualizado";

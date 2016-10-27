@@ -1,6 +1,27 @@
-<?
+<?php
 //En for mangaer
-$add_account = "Registo agregado";
+$add_account = "Cuenta agregada"; //added 2014/10/29 by ema
+$supervisor = "Supervisor"; //added 2014/10/29 by ema
+$create_secure_password = "Crear una contraseña segura"; //added 2014/11/05 by ema
+$send_password = "Enviar contraseña"; //added 2014/11/05 by ema
+$please_enter_the_username_and_password = "Favor de introducir el usuario y la contraseña"; //added 2014/11/05 by ema
+$please_select_usertype = "Favor de seleccionar el tipo de usuario"; //added 2014/11/05 by ema
+$please_choose_a_reseller = "Favor de elegir un distribuidor"; //added 2014/11/05 by ema
+$please_choose_reseller_and_group = "Favor de elegir un distribuidor y caseta"; //added 2014/11/05 by ema
+$please_enter_a_valid_email = "Favor de introducir un email válido"; //added 2014/11/05 by ema
+$username_duplicate = "Nombre de usuario duplicado"; //added 2014/11/05 by ema
+$new_password = "Nueva Contraseña"; //added 2014/11/14 by ema 
+$hello = "Hola"; //added 2014/11/14 by ema 
+$your_new_password = "Nueva Contraseña"; //added 2014/11/14 by ema 
+$now_you_can_login_with_this_username_and_password = "Ahora ya puedes acceder al sistema con este usuario y contraseña"; //added 2014/11/14 by ema 
+$sumatel_team = "Equipo SuMaTeL"; //added 2014/11/14 by ema
+$operator = "Operador"; //added 2014/11/21 by ema
+$hrsupervisor = "Supervisor Capital Humano"; // 2014/11/21 by ema
+$technical_admin = "Administrador Técnico"; // 2014/11/27 by ema
+$technicaladmin = "Administrador Técnico"; // 2014/11/27 by ema
+$group_admin = "Administrador de Caseta"; // 2014/11/27 by ema
+$groupadmin = "Administrador de Caseta"; // 2014/11/27 by ema
+$admin = "Administrador"; // 2014/11/27 by ema
 $update_rec = "Un registro ha sido actualizado";
 $rec_cannot_update = "El registro no pudo ser actualizado";
 $rec_cannot_insert = "El registro no pudo ser insertado";
@@ -23,7 +44,7 @@ $account_code		= "Codigo de Cuenta";	// added 2007/11/12 by solo
 $username_repeat = "Nombre de Usuario Repetido";
 $like = "Como"; // added 2014/05/15 by ema
 $reseller = "Distribuidor"; // added 2014/05/15 by ema
-$group = "Caseta"; // added 2014/05/15 by ema
+$group = "Caseta Actual"; // added 2014/05/15 by ema
 $last_update = "Última Actualización"; // added 2014/05/15 by ema
 $action = "Acción"; //added 2014/05/15 by ema
 $status = "Estado"; //added 2014/05/15 by ema

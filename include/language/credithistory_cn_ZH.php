@@ -1,4 +1,4 @@
-<?
+<?php
 $like = "包含";
 $modifytime = "修改时间";
 $clid = "分机";

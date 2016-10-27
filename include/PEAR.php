@@ -701,11 +701,12 @@ class PEAR
     /**
     * OS independant PHP extension load. Remember to take care
     * on the correct extension name for case sensitive OSes.
-    *
+    * 
+    * @deprecated since version PHP 5.3
     * @param string $ext The extension name
     * @return bool Success or not on the dl() call
     */
-    function loadExtension($ext)
+    /*function loadExtension($ext)
     {
         if (!extension_loaded($ext)) {
             // if either returns true dl() will produce a FATAL error, stop that
@@ -726,7 +727,7 @@ class PEAR
             return @dl('php_'.$ext.$suffix) || @dl($ext.$suffix);
         }
         return true;
-    }
+    }*/
 
     // }}}
 }

@@ -1,4 +1,4 @@
-<?
+<?php
 $like = "包含";
 $prefix = "号码前缀";
 $length = "号码长度";

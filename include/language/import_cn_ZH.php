@@ -1,4 +1,4 @@
-<?
+<?php
 	$please_select_file = "选择要上传的csv/xls文件";
 	$upload = "上传";
 	$file_manager = "文件管理";

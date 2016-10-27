@@ -44,7 +44,7 @@ require_once('rate.common.php');
 		}
 
 		function updateCustomerMultiple(){
-			if (confirm("<?echo $locate->Translate("are you sure to update this value");?>")){
+			if (confirm("<?php echo $locate->Translate("are you sure to update this value");?>")){
 				xajax_updateCustomerMultiple(document.getElementById("customer_multiple").value);
 			}
 		}
@@ -71,18 +71,18 @@ require_once('rate.common.php');
 			<tr>
 				<td style="padding: 0px;">
 					<fieldset>
-		<?
+		<?php
 			// when it's groupadmin we allow him set Customer Billsec Multiple 	
 			if ($_SESSION['curuser']['usertype'] == "groupadmin") {
 		?>
 			<div class="centermain">
-				<?echo $locate->Translate("Customer Billsec Multiple");?>
+				<?php echo $locate->Translate("Customer Billsec Multiple");?>
 				<input type="text" id="customer_multiple" name="customer_multiple" value="" size="6" maxlength="6" >
 				<input type="button" value="Update" onclick="updateCustomerMultiple();">&nbsp;&nbsp;&nbsp;&nbsp;
 				<span id="spnShortcutUpdate"></span>&nbsp;&nbsp;&nbsp;&nbsp;
 				<span id="spnShortcutMsg"></span>
 			</div>
-		<?
+		<?php
 			}		
 		?>
 			<div id="formDiv"  class="formDiv drsElement" 

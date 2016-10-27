@@ -38,7 +38,7 @@ $extension = $agi->request['agi_extension'];
 
 $trunkname = $age->get_variable("TRUNK");
 // format should be callshop-XXXX
-$tmp = split("-",$context);
+$tmp = preg_split("/-/",$context);
 $userid = $tmp[1];
 
 $query = "SELECT clid FROM clid WHERE groupid = $groupid AND pin = '$dnid'";

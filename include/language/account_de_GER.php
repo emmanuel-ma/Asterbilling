@@ -1,4 +1,4 @@
-<?
+<?php
 //DE for account manager
 $add_account = "Ein neues Benutzerkonto wurde hinzugefügt";
 $update_rec = "Eintrag wurde aktualisiert";

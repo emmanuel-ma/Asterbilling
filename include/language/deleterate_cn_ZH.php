@@ -1,4 +1,4 @@
-<?
+<?php
 $select_rate_table = "选择费率表";
 $select_table = "选择表";
 $myrate = "用户费率";

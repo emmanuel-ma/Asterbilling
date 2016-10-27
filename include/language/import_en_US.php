@@ -1,4 +1,4 @@
-<?
+<?php
 	$please_select_file = "choose csv/xls file";
 	$upload = "upload";
 	$file_manager = "file manager";

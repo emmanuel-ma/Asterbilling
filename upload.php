@@ -59,7 +59,7 @@ if ( isset($_POST['LogoUploadFlag']) && trim($_POST['LogoUploadFlag']) == '1' ){
 	if (is_uploaded_file($_FILES['callshopLogo']['tmp_name'])){
 
 		if (strstr($_FILES['callshopLogo']['type'],'image')){
-			$file = split('\.',$_FILES['callshopLogo']['name']);
+			$file = preg_split('/\./',$_FILES['callshopLogo']['name']);
 			$file_count = count($file) -1;
 			$file_ext = $file[$file_count];
 			$filename = 'callshoplogo_'.$_REQUEST['group_id'].'.'.$file_ext;
@@ -75,7 +75,7 @@ if ( isset($_POST['LogoUploadFlag']) && trim($_POST['LogoUploadFlag']) == '1' ){
 			}
 
 			if(!move_uploaded_file($_FILES['callshopLogo']['tmp_name'], $filepath.$filename)){
-				echo "<script>alert('".$locate->Translate("Logo upload faild1")."');</script>";
+				echo "<script>alert('".$locate->Translate("Logo upload fail!")."');</script>";
 			}else{
 				echo "<script>alert('".$locate->Translate("Logo upload success")."');</script>";
 				$group_row = astercrm::getRecord($_REQUEST['group_id'],'accountgroup');
@@ -157,11 +157,11 @@ else
 
 ?>
 <SCRIPT LANGUAGE="JavaScript">
-	var msg = "<? echo $upload_msg; ?><br />";
+	var msg = "<?php echo $upload_msg; ?><br />";
 	window.parent.document.getElementById("divMessage").innerHTML = msg;//msg;
-	//alert ("<?=$_FILES['excel']['name']?>");
-	window.parent.showDivMainRight("<?=$file_name?>");
+	//alert ("<?php echo $_FILES['excel']['name']; ?>");
+	window.parent.showDivMainRight("<?php echo $file_name; ?>");
 	window.parent.document.getElementById('btnUpload').disabled = false;
-	window.parent.document.getElementById('btnUpload').value="<?=$locate->Translate('upload')?>";
-	window.parent.document.getElementById('hidFileName').value="<?=$file_name?>";
+	window.parent.document.getElementById('btnUpload').value="<?php echo $locate->Translate('upload'); ?>";
+	window.parent.document.getElementById('hidFileName').value="<?php echo $file_name; ?>";
 </SCRIPT>

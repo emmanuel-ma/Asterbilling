@@ -1,4 +1,4 @@
-<?
+<?php
 $reseller = "Distribuidor";
 $reseller_name = "Nombre Distribuidor";
 $group_name = "Caseta";
@@ -30,7 +30,9 @@ $please_enter_the_groupname = "Por favor introduzca el nombre de la caseta";
 $please_enter_the_resellername = "Por favor introduzca el nombre del distribuidor";
 $title = "Nombre de la Caseta";
 $tagline = "Nombre de Etiqueta de Casetas";
-$display_logo = "Logo Mostrado";
+$display_logo = "Logo"; //modified 2015/01/14 by ema
+$enable = "Mostrar"; //modified 2015/01/14 by ema
+$disable = "Ocultar"; //modified 2015/01/14 by ema
 $upload_new_logo = "Subir nuevo Logo";
 $group_billsec_multiple = "Multiplicador de Casetas"; //modified 2014/05/15 by ema
 $customer_billsec_multiple = "Multiplicador de Clientes";
@@ -59,5 +61,24 @@ $auto = "auto";
 $default = "default";
 $customize = "customize";
 $there_are_new_changes = "There are new changes, please click reload";
-
+$reset_group = "Reiniciar Caseta";
+$receipt_printer = "Nombre de Impresora de Recibos"; //modified 2015/01/14 by ema
+$must_have_wcpp_installed_on_each_client_machine = "Debe tener instalado WCPP en la computadora de la operadora"; //modified 2015/01/15 by ema
+$print_test_receipt = "Imprimir recibo de prueba"; //modified 2015/01/16 by ema
+$operator = "Operador"; //modified 2015/01/16 by ema
+$phone = "Telefono"; //modified 2015/01/16 by ema
+$start_at = "Inicio"; //modified 2015/01/16 by ema
+$billsec = "Duracion"; //modified 2015/01/16 by ema
+$price = "Precio"; //modified 2015/01/16 by ema
+$discount = "Descuento"; //modified 2015/01/16 by ema
+$no_printers_are_installed_in_your_system = "No hay impresoras instaladas en el sistema"; //modified 2015/01/16 by ema
+$length_of = "La longitud del"; //modified 2015/01/16 by ema
+$must_be_between = "debe estar entre"; //modified 2015/01/16 by ema
+$and = "y"; //modified 2015/01/16 by ema
+$printer_name = "Nombre de la Impresora"; //modified 2015/01/16 by ema
+$select_a_printer = "Seleccione una impresora"; //modified 2015/01/16 by ema
+$must_select_a_printer = "Debe seleccionar una impresora"; //modified 2015/01/16 by ema
+$characters = "caracteres"; //modified 2015/01/16 by ema
+$select = "Seleccionar"; //modified 2015/01/16 by ema
+$cancel = "Cancelar"; //modified 2015/01/16 by ema
 ?>

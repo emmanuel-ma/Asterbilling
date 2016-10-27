@@ -1,4 +1,4 @@
-<?
+<?php
 	$please_select_file = "Exel-CSV Datei auswählen";
 	$upload = "Importieren";
 	$file_manager = "Datei Manager";

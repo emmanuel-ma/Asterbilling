@@ -1,4 +1,4 @@
-<?
+<?php
 //Cn for profile
 $reseller_infomation = "代理商信息";
 $reseller_name = "代码理名称";

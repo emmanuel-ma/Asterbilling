@@ -13,6 +13,7 @@
 
 // If you have the PEAR PHP package, you can comment the next line.
 ini_set('include_path',dirname($_SERVER["SCRIPT_FILENAME"])."/include");
+//ini_set('include_path',"/usr/share/pear/");
 
 require_once 'DB.php';
 require_once 'PEAR.php';

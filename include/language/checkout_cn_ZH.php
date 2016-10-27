@@ -1,4 +1,4 @@
-<?
+<?php
 $amount = "合计";
 $callshop = "分组";
 $callshop_cost = "分组成本";

@@ -1,4 +1,4 @@
-<?
+<?php
 define('ABC_CRITICAL',      0);
 define('ABC_ERROR',         1);
 define('ABC_ALERT',         2);
@@ -9,7 +9,7 @@ define('ABC_DEBUG',         6);
 define('ABC_TRACE',         7);
 define('ABC_VAR_DUMP',      8);
 define('ABC_NO_LOG',      -1);
-$php_version = split( "\.", phpversion() );
+$php_version = preg_split( "/\./", phpversion() );
 if( $php_version[0] == 4 && $php_version[1] <= 1 ) {
     if( !function_exists('var_export') ) {
         function var_export( $exp, $ret ) {
@@ -1209,7 +1209,7 @@ $ret .= '&#'.$charcode;
 }return $ret;
 }
 
-//------------------------¶ÁÈ¡ExcelÎÄ¼þ
+//------------------------ï¿½ï¿½È¡Excelï¿½Ä¼ï¿½
 function Read_Excel_File($ExcelFile,&$result) {
 
 $exc = new ExcelFileParser("", ABC_NO_LOG );
@@ -1217,16 +1217,16 @@ $res=$exc->ParseFromFile($ExcelFile);$result=null;
 
 switch ($res) {
 	case 0: break;
-	case 1: $err="ÎÞ·¨´ò¿ªÎÄ¼þ"; break;
-	case 2: $err="ÎÄ¼þÌ«Ð¡£¬¿ÉÄÜ²»ÊÇExcelÎÄ¼þ"; break;
-	case 3: $err="ÎÄ¼þÍ·¶ÁÈ¡´íÎó"; break;
-	case 4: $err="¶ÁÈ¡ÎÄ¼þÊ±³ö´í"; break;
-	case 5: $err="Õâ²»ÊÇÒ»¸öExcelÎÄ¼þ»òÕßÊÇExcel5.0ÒÔÇ°°æ±¾ÎÄ¼þ"; break;
-	case 6: $err="ÎÄ¼þËð»µ"; break;
-	case 7: $err="ÔÚÎÄ¼þÖÐÃ»ÓÐ·¢ÏÖExcelÊý¾Ý"; break;
-	case 8: $err="²»Ö§³ÖµÄÎÄ¼þ°æ±¾"; break;
+	case 1: $err="ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½"; break;
+	case 2: $err="ï¿½Ä¼ï¿½Ì«Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½Excelï¿½Ä¼ï¿½"; break;
+	case 3: $err="ï¿½Ä¼ï¿½Í·ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½"; break;
+	case 4: $err="ï¿½ï¿½È¡ï¿½Ä¼ï¿½Ê±ï¿½ï¿½ï¿½ï¿½"; break;
+	case 5: $err="ï¿½â²»ï¿½ï¿½Ò»ï¿½ï¿½Excelï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Excel5.0ï¿½ï¿½Ç°ï¿½æ±¾ï¿½Ä¼ï¿½"; break;
+	case 6: $err="ï¿½Ä¼ï¿½ï¿½ï¿½"; break;
+	case 7: $err="ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ã»ï¿½Ð·ï¿½ï¿½ï¿½Excelï¿½ï¿½ï¿½"; break;
+	case 8: $err="ï¿½ï¿½Ö§ï¿½Öµï¿½ï¿½Ä¼ï¿½ï¿½æ±¾"; break;
 	default:
-		$err="Î´Öª´íÎó"; break;
+		$err="Î´Öªï¿½ï¿½ï¿½ï¿½"; break;
 }
 
 for( $ws_num=0; $ws_num<count($exc->worksheet['name']); $ws_num++ )
@@ -1274,7 +1274,7 @@ for( $ws_num=0; $ws_num<count($exc->worksheet['name']); $ws_num++ )
 if ($err=='') {return 0;} else {return $err;}
 }
 
-//------------------------½¨Á¢ExcelÎÄ¼þ
+//------------------------ï¿½ï¿½ï¿½ï¿½Excelï¿½Ä¼ï¿½
 function Create_Excel_File($ExcelFile,$Data) {
 	
 header ('Content-type: application/x-msexcel'); 

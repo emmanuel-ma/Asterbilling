@@ -1,12 +1,12 @@
-<?
+<?php
 $title="Ouverture de session ";
 $username="Nom d'utilisateur ";
 $password="Mot de passe ";
 $submit="Envoyer ";
 $please_waiting = 'Login, veuillez patienter ';
-$username_cannot_be_blank = "Le nom d'utilisateur ne peut pas être vide";
-$password_cannot_be_blank = "Le mot de passe ne peut pas être vide";
-$login_success = "Connexion effectuee avec succès";
+$username_cannot_be_blank = "Le nom d'utilisateur ne peut pas ï¿½tre vide";
+$password_cannot_be_blank = "Le mot de passe ne peut pas ï¿½tre vide";
+$login_success = "Connexion effectuee avec succï¿½s";
 $login_failed = "Connexion ratee, veuillez verifier votre nom d'utilisateur / mot de passe";
 $ami_connect_failed = "AMI connexion erreur, certaines fonction ne fonctionne pas, verifiez vos fichiers de configuration";
 $extension_not_online = "extension is off line, please check your device";

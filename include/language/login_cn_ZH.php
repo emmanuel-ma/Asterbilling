@@ -1,4 +1,4 @@
-<?
+<?php
 $title="帐户登入 ";
 $user_title="用户登入";
 $manager_title="管理员登入";

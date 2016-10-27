@@ -1,4 +1,4 @@
-<?
+<?php
 $edit = "Editer";
 $detail = "Detail";
 $delete = "Supprimer";
@@ -15,7 +15,7 @@ $total = "Total";
 $next = "Suivant >";
 $last = "Dernier >>";
 $show_all = "Afficher tout";
-$delete_confirm	= "Etes vous sûr de vouloir supprimer cet enregistrement?";
+$delete_confirm	= "Etes vous sï¿½r de vouloir supprimer cet enregistrement?";
 $add_search = "Add Search Object";
 $export = "Exporter";
 ?>

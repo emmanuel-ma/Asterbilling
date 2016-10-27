@@ -1,4 +1,4 @@
-<?
+<?php
 $pin	= "PIN";
 $first_name = "Primer Nombre";
 $last_name = "Último Nombre";

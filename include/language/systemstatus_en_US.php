@@ -1,4 +1,4 @@
-<?
+<?php
 $amount = "Today Amount";
 $cost = "Today Cost";
 $limit = "Limit";

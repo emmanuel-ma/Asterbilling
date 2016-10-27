@@ -1,4 +1,4 @@
-<?
+<?php
 $amount = "Quantidade";
 $callshop = "Callshop";
 $callshop_cost = "Custo Callshop";

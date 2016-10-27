@@ -1,5 +1,21 @@
-<?
-$amount = "Cantidad";
+<?php
+$reseller = "Distribuidor"; //added 2014/10/22 by ema
+$account = "Operador"; //added 2014/10/22 by ema
+$report = "Reporte"; //added 2014/10/22 by ema
+$report_type = "Tipo de Reporte"; //added 2014/10/22 by ema
+$sum_by_group = "Sumar por grupo"; //added 2014/10/24 by ema
+$sum_by_account = "Sumar por operador"; //added 2014/11/20 by ema
+$text = "Texto"; //added 2014/10/24 by ema
+$asr = "Llamadas Contestadas "; //added 2014/10/30 by ema
+$acd = "Duración Promedio";  //added 2014/10/30 by ema
+$billsec_leg_a = "Tiempo Facturado 1a Etapa"; //added 2014/10/30 by ema
+$amount = "Importe"; //modified 2014/10/30 by ema
+$answered = "Contestadas"; //added 2014/11/20 by ema
+$accountlog_account = "Sesiones por operador";
+$accountlog_group = "Sesiones por caseta";
+$date = "Fecha";
+$login = "Inicio de Sesión";
+$logout = "Fin de Sesión";
 $callshop = "Caseta";
 $callshop_cost = "Costo Caseta";
 $reseller_cost = "Costo Distribuidor";
@@ -23,7 +39,7 @@ $cal = "Calendario";
 $callback = "WebCall";
 $from = "De";
 $to = "A";
-$markup = "Beneficio";
+$markup = "Utilidad"; //modified 2014/10/30 by ema
 $calls = "Llamadas";
 $sum_by_year = "Sumar por año";
 $sum_by_month = "Sumar por mes";
@@ -41,4 +57,6 @@ $check_out = "Pagar"; //added 2014/05/14 by ema
 $processing_please_wait = "Procesando, por favor espere"; //added 2014/05/15 by ema
 $checkoutall = "Pagar Todo"; //added 2014/05/15 by ema
 $should = "debería ser";  //added 2014/05/15 by ema
+$sells = "Ventas"; //added 2014/12/15 by ema
+$yesterday = "Ayer"; //added 2014/12/22 by ema
 ?>

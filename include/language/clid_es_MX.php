@@ -1,4 +1,4 @@
-<?
+<?php
 $record_deleted = "Registro eliminado";
 $record_cannot_be_deleted = "Registro no pudo ser eliminado";
 $pin_duplicat = "Pin Duplicado";

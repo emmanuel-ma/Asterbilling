@@ -1,4 +1,4 @@
-<?
+<?php
 //En for mangaer
 $reload_info = "- 立即重载asterisk (不会影响当前的通话)";
 $restart_info = "- 立即重新启动asterisk (所有当前通话将会被挂断)";

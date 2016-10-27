@@ -23,7 +23,7 @@ require_once('delete_rate.common.php');
 			}
 
 			function restartAsterrc(){
-				var msg = "<?echo $locate->Translate('Are you sure to')?> <? echo $locate->Translate('restart asterrc')?>?";
+				var msg = "<?php echo $locate->Translate('Are you sure to')?> <?php echo $locate->Translate('restart asterrc')?>?";
 				if(confirm(msg)){
 					xajax_restartAsterrc();
 				}else{

@@ -1,4 +1,4 @@
-<?
+<?php
 $title="Benutzer Login ";
 $username="Benutzer Name ";
 $password="Passwort ";

@@ -1,4 +1,4 @@
-<?
+<?php
 //Cn for account manager
 $add_account = "添加了一个新帐号";
 $update_rec = "该记录已更新";

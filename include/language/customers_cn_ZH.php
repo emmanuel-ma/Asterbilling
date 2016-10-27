@@ -1,4 +1,4 @@
-<?
+<?php
 $pin	= "密码";
 $first_name = "名字";
 $last_name = "姓氏";

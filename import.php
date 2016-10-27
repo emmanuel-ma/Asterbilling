@@ -188,9 +188,9 @@
 			<div id="mainform">
 				<form action="upload.php" method="post" enctype="multipart/form-data" name="formUpload" id="formUpload" target="iframeShowExcel" onsubmit="uploadFile();return false;">
 					<input type="hidden" name="CHECK" value="1" />
-					<span id="spanSelectFile"></span>: <input type="file" name="excel" id="excel"/>&nbsp;<b><?echo $locate->Translate('Or');?></b>&nbsp;<select name="filelist" id="filelist" onchange="if (this.value != 0){document.getElementById('excel').value=''; enableDelete();}"></select>
+					<span id="spanSelectFile"></span>: <input type="file" name="excel" id="excel"/>&nbsp;<b><?php echo $locate->Translate('Or');?></b>&nbsp;<select name="filelist" id="filelist" onchange="if (this.value != 0){document.getElementById('excel').value=''; enableDelete();}"></select>
 					<br /><br />
-					<input type="submit" value="" id="btnUpload" name="btnUpload" style="width:150px;"/><span id="spnDel" style="display:none"><input type="button" value="<?echo $locate->Translate("Delete File");?>" id="btnDelete" name="btnDelete" style="width:150px;" onclick="deleteFile();" disabled/></span>
+					<input type="submit" value="" id="btnUpload" name="btnUpload" style="width:150px;"/><span id="spnDel" style="display:none"><input type="button" value="<?php echo $locate->Translate("Delete File");?>" id="btnDelete" name="btnDelete" style="width:150px;" onclick="deleteFile();" disabled/></span>
 					<input id="hidOnUploadMsg" name="hidOnUploadMsg" type="hidden" value=""/>
 				</form>
 			</div>

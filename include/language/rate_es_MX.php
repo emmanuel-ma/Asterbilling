@@ -1,4 +1,4 @@
-<?
+<?php
 $like = "Como";
 $prefix = "Prefijo";
 $length = "Longitud";

@@ -1,4 +1,4 @@
-<?
+<?php
 $calldate = "Datum";
 $src = "Ursprung";
 $dst = "Ziel";

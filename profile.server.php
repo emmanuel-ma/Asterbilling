@@ -34,9 +34,9 @@ function init($get=''){
 
 	if($get != ''){
 		$get = rtrim($get,',');
-		$get = split(',',$get);
+		$get = preg_split('/,/',$get);
 		foreach($get as $item_tmp){
-			$item = split(':',$item_tmp);
+			$item = preg_split('/:/',$item_tmp);
 			$get_item[$item[0]] = $item[1];
 		}
 	}
@@ -344,7 +344,7 @@ function rechargeHtml(){
 		$html .='<tr bgcolor="#F7F7F7">
 				<td align="center" valign="top" ><span id="recharge_item_name" name="recharge_item_name">'.$config['epayment']['item_name'].'</span>:&nbsp;&nbsp;<span id="recharge_currency_code" id="recharge_currency_code">'.$config['epayment']['currency_code'].'</span>&nbsp;&nbsp;<select id="amount" name="amount">';
 
-		$amountP = split(',',$config['epayment']['amount']);
+		$amountP = preg_split('/,/',$config['epayment']['amount']);
 
 	}elseif($_SESSION['curuser']['usertype'] == 'groupadmin'){
 
@@ -352,7 +352,7 @@ function rechargeHtml(){
 		$html .='<tr bgcolor="#F7F7F7">
 				<td align="center" valign="top" ><span id="recharge_item_name" name="recharge_item_name">'.$reseller_row['epayment_item_name'].'</span>:&nbsp;&nbsp;<span id="recharge_currency_code" id="recharge_currency_code">'.$config['epayment']['currency_code'].'</span>&nbsp;&nbsp;<select id="amount" name="amount">';
 
-		$amountP = split(',',$reseller_row['epayment_amount_package']);		
+		$amountP = preg_split('/,/',$reseller_row['epayment_amount_package']);		
 	}
 
 	foreach ($amountP as $amount ){
@@ -386,7 +386,7 @@ function rechargeByPaypal($amount){
 			$p->paypal_url = $config['epayment']['paypal_payment_url'];
 			$p->add_field('business',$config['epayment']['paypal_account']);
 			$this_url = $_SERVER['HTTP_REFERER'];
-			$this_url = split('\?',$this_url);
+			$this_url = preg_split('/\?/',$this_url);
 			$this_url = $this_url['0'];
 			$p->add_field('return',$this_url.'?action=success');
 			$p->add_field('cancel_return',$this_url.'?action=cancel');
@@ -412,7 +412,7 @@ function rechargeByPaypal($amount){
 			$p->paypal_url = $config['epayment']['paypal_payment_url'];;
 			$p->add_field('business',$reseller_row['epayment_account']);
 			$this_url = $_SERVER['HTTP_REFERER'];
-			$this_url = split('\?',$this_url);
+			$this_url = preg_split('/\?/',$this_url);
 			$this_url = $this_url['0'];
 			$p->add_field('return',$this_url.'?action=success');
 			$p->add_field('cancel_return',$this_url.'?action=cancel');

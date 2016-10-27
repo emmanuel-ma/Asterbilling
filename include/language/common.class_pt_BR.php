@@ -1,4 +1,4 @@
-<?
+<?php
 $username	= "Nome de usuário";
 $user_type = "Tipo de usuário";
 $account = "CONTA";

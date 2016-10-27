@@ -1,4 +1,4 @@
-<?
+<?php
 $like = "Como ";
 $modifytime = "Modificar tempo";
 $clid = "Cabine";

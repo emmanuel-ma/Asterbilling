@@ -1,4 +1,4 @@
-<?
+<?php
 $calldate = "Data da Ligação";
 $src = "Origem";
 $dst = "N. Discado";

@@ -87,7 +87,7 @@ require_once('resellergroup.common.php');
 					xajax.$("trunkname1c").style.display = '';
 					xajax.$("defaulttrunk1").style.display = 'none';
 					xajax.$("whichtrunk").value = 1;
-					xajax.$("whichtrunktip").innerHTML = "<? echo $locate->Translate("trunk1")?>";
+					xajax.$("whichtrunktip").innerHTML = "<?php echo $locate->Translate("trunk1")?>";
 					if(xajax.$("tmptrunk1id").value == 0){
 						xajax.$("trunkname").value = '';
 						xajax.$("protocoltype").value = 'sip';
@@ -105,7 +105,7 @@ require_once('resellergroup.common.php');
 					xajax.$("trunkname2c").style.display = '';
 					xajax.$("defaulttrunk2").style.display = 'none';
 					xajax.$("whichtrunk").value = 2;
-					xajax.$("whichtrunktip").innerHTML = "<? echo $locate->Translate("trunk2")?>";
+					xajax.$("whichtrunktip").innerHTML = "<?php echo $locate->Translate("trunk2")?>";
 					if(xajax.$("tmptrunk2id").value == 0){
 						xajax.$("trunkname").value = '';
 						xajax.$("protocoltype").value = 'sip';
@@ -145,7 +145,7 @@ require_once('resellergroup.common.php');
 		}
 
 		function deltrunk(order){
-			if(confirm("<? echo $locate->Translate("Are you sure to delete this turnk")?>")){
+			if(confirm("<?php echo $locate->Translate("Are you sure to delete this turnk")?>")){
 				rid = xajax.$("resellerid").value;
 				if(order == 1){
 					turnkid = xajax.$("tmptrunk1id").value;					

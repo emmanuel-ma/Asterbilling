@@ -473,9 +473,9 @@ function multiEditUpdate($searchContent = array(),$searchField = array(),$search
 
 	$objResponse = new xajaxResponse();
 
-	$searchContent = split(',',$searchContent);
-	$searchField = split(',',$searchField);
-	$searchType = split(',',$searchType);
+	$searchContent = preg_split('/,/',$searchContent);
+	$searchField = preg_split('/,/',$searchField);
+	$searchType = preg_split('/,/',$searchType);
 	$i = 0;
 
 	foreach($searchField as $field){
@@ -510,7 +510,7 @@ function multiEditUpdate($searchContent = array(),$searchField = array(),$search
 
 	$joinstr = astercrm::createSqlWithStype($searchField,$searchContent,$searchType);
 	
-	list($field,$fieldType) = split(',',$f['multieditField']);
+	list($field,$fieldType) = preg_split('/,/',$f['multieditField']);
 
 	$sucessNum = 0;
 
@@ -658,7 +658,7 @@ function setMultieditType($fields){
 	global $locate;
 
 	$objResponse = new xajaxResponse();
-	list($field,$type) = split(',',$fields);
+	list($field,$type) = preg_split('/,/',$fields);
 	if($type == 'int' || $type == 'real'){
 		$objResponse->assign("multieditType","options.length",'0');
 		$objResponse->addScript("addOption('multieditType','to','".$locate->Translate("to")."');");

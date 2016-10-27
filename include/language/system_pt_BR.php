@@ -1,4 +1,4 @@
-<?
+<?php
 //En for mangaer
 $reload_info = "- Resetar Asterisk (todas as chamadas ativas cairão)";
 $restart_info = "- Asterisk será forçado a reiniciar (todas as chamadas ativas cairão)";

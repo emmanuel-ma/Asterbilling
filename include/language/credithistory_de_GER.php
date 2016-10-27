@@ -1,4 +1,4 @@
-<?
+<?php
 $like = "Wie";
 $modifytime = "Änderungsdatum";
 $clid = "Kabine";

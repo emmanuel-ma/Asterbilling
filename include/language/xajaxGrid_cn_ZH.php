@@ -1,4 +1,4 @@
-<?
+<?php
 $edit = "编辑";
 $detail = "详细";
 $delete = "删除";

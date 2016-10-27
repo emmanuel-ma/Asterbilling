@@ -34,7 +34,7 @@ $customerid = $_REQUEST['customerid'];
 		<!--
 
 			function init(){
-				customerid = "<? echo $customerid ?>";
+				customerid = "<?php echo $customerid ?>";
 				xajax_init(customerid);
 				dragresize.apply(document);
 			}
@@ -47,7 +47,7 @@ $customerid = $_REQUEST['customerid'];
 
 		function archiveCDR(){			
 			archiveDate=document.getElementById('archiveDate').value;
-			if( confirm("<? echo $locate->Translate('are you sure to archive CDR early than');?> "+archiveDate+" <? echo $locate->Translate('months'); ?> ?") ){
+			if( confirm("<?php echo $locate->Translate('are you sure to archive CDR early than');?> "+archiveDate+" <?php echo $locate->Translate('months'); ?> ?") ){
 				document.getElementById("msgZone").innerHTML = "<b> Processing, please wait ...</b>";
 				document.getElementById("divMsg").style.visibility="visible";
 				xajax_archiveCDR(archiveDate);

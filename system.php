@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * system.php
 
@@ -42,15 +42,15 @@ require_once('system.common.php');
 
 			function systemAction(type){
 				if(type == 'reload'){
-					var msg = "<?echo $locate->Translate('Are you sure to')?> <? echo $locate->Translate('reload')?>?";
+					var msg = "<?php echo $locate->Translate('Are you sure to')?> <?php echo $locate->Translate('reload')?>?";
 				}else if(type == 'restart'){
-					var msg = "<?echo $locate->Translate('Are you sure to')?> <? echo $locate->Translate('restart')?>?";
+					var msg = "<?php echo $locate->Translate('Are you sure to')?> <?php echo $locate->Translate('restart')?>?";
 				}else if(type == 'restartasterrc'){
-					var msg = "<?echo $locate->Translate('Are you sure to')?> <? echo $locate->Translate('restart asterrc')?>?";
+					var msg = "<?php echo $locate->Translate('Are you sure to')?> <?php echo $locate->Translate('restart asterrc')?>?";
 				}else if(type == 'reboot'){
-					var msg = "<?echo $locate->Translate('Are you sure to')?> <? echo $locate->Translate('reboot')?>?";
+					var msg = "<?php echo $locate->Translate('Are you sure to')?> <?php echo $locate->Translate('reboot')?>?";
 				}else if(type == 'shutdown'){
-					var msg = "<?echo $locate->Translate('Are you sure to')?> <? echo $locate->Translate('shutdown')?>?";
+					var msg = "<?php echo $locate->Translate('Are you sure to')?> <?php echo $locate->Translate('shutdown')?>?";
 				}
 				if(confirm(msg)){
 					xajax_systemAction(type);
@@ -76,7 +76,7 @@ require_once('system.common.php');
 	<table border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F0F0F0" width="650">
 	  <tr>
 		<td width="25%" height="39" class="td font" align="left">
-			<? echo $locate->Translate('System');?>
+			<?php echo $locate->Translate('System');?>
 		</td>
 		<td width="75%" class="td font" align="center"><div id="divmsg"></div></td>
 	  </tr>
@@ -84,31 +84,31 @@ require_once('system.common.php');
 	<table border="0" align="center" cellpadding="1" cellspacing="1" bgcolor="#F0F0F0" id="menu" width="650"> 
 
 				<tr bgcolor="#F7F7F7">
-					<td width="25%" align="center" valign="center" height="30"><input type="button" onclick="systemAction('restartasterrc');return false;"  value="<?echo $locate->Translate('Restart asterrc');?>" style="width:110px;"/></td>
-					<td  align="left" valign="center" height="30">&nbsp;&nbsp;- <?echo $locate->Translate('Restart asterrc daemon');?></td>					
+					<td width="25%" align="center" valign="center" height="30"><input type="button" onclick="systemAction('restartasterrc');return false;"  value="<?php echo $locate->Translate('Restart asterrc');?>" style="width:110px;"/></td>
+					<td  align="left" valign="center" height="30">&nbsp;&nbsp;- <?php echo $locate->Translate('Restart asterrc daemon');?></td>					
 				  </tr>
 				  <tr bgcolor="#F7F7F7">
-					<td width="25%" align="center" valign="center" height="30"><input type="button" onclick="systemAction('reload');return false;"  value="<?echo $locate->Translate('Reload asterisk');?>" style="width:110px;"/></td>
-					<td  align="left" valign="center" height="30">&nbsp;&nbsp;<?echo $locate->Translate('reload info');?></td>					
+					<td width="25%" align="center" valign="center" height="30"><input type="button" onclick="systemAction('reload');return false;"  value="<?php echo $locate->Translate('Reload asterisk');?>" style="width:110px;"/></td>
+					<td  align="left" valign="center" height="30">&nbsp;&nbsp;<?php echo $locate->Translate('reload info');?></td>					
 				  </tr>
 				  <tr bgcolor="#F7F7F7">
-					<td  align="center" valign="center" height="30"><input type="button" onclick="systemAction('restart');return false;"  value="<?echo $locate->Translate('Restart asterisk');?>" style="width:110px;"/></td>
-					<td align="left" valign="center" height="30" >&nbsp;&nbsp;<?echo $locate->Translate('restart info');?></td>					
+					<td  align="center" valign="center" height="30"><input type="button" onclick="systemAction('restart');return false;"  value="<?php echo $locate->Translate('Restart asterisk');?>" style="width:110px;"/></td>
+					<td align="left" valign="center" height="30" >&nbsp;&nbsp;<?php echo $locate->Translate('restart info');?></td>					
 				  </tr>
 				  <!--<tr bgcolor="#F7F7F7">
-					<td  align="center" valign="center" height="30"><input type="button" onclick="systemAction('reboot');return false;"  value=" <?echo $locate->Translate('Reboot asterccBox');?>" style="width:130px;"/></td>
-					<td  align="left" valign="center" height="30">&nbsp;&nbsp;<?echo $locate->Translate('reboot info');?></td>					
+					<td  align="center" valign="center" height="30"><input type="button" onclick="systemAction('reboot');return false;"  value=" <?php echo $locate->Translate('Reboot asterccBox');?>" style="width:130px;"/></td>
+					<td  align="left" valign="center" height="30">&nbsp;&nbsp;<?php echo $locate->Translate('reboot info');?></td>					
 				  </tr>
 				  <tr bgcolor="#F7F7F7">
-					<td  align="center" valign="center" height="30"><input type="button" onclick="systemAction('shutdown');return false;"  value="<?echo $locate->Translate('Shutdown asterccBox');?>" style="width:130px;"/></td>
-					<td  align="left" valign="center" height="30" >&nbsp;&nbsp;<?echo $locate->Translate('shutdown info');?></td>					
+					<td  align="center" valign="center" height="30"><input type="button" onclick="systemAction('shutdown');return false;"  value="<?php echo $locate->Translate('Shutdown asterccBox');?>" style="width:130px;"/></td>
+					<td  align="left" valign="center" height="30" >&nbsp;&nbsp;<?php echo $locate->Translate('shutdown info');?></td>					
 				  </tr>-->
 	</table>
 	
 	<table border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F0F0F0" width="650">
 	  <tr>
 		<td width="40%" height="39" class="td font" align="left">
-			<? echo $locate->Translate('Current Channels');?> (<a href="javascript:void(null)" onclick="xajax_hangupchnnel('')"><?echo $locate->Translate('refresh');?></a>)
+			<?php echo $locate->Translate('Current Channels');?> (<a href="javascript:void(null)" onclick="xajax_hangupchnnel('')"><?php echo $locate->Translate('refresh');?></a>)
 		</td>
 		<td width="60%" class="td font" align="center">&nbsp;</td>
 	  </tr>

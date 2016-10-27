@@ -1,4 +1,4 @@
-<?
+<?php
 $phone = "号码";
 $billsec = "时长";
 $sec = "时长";

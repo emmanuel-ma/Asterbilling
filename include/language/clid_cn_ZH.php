@@ -1,4 +1,4 @@
-<?
+<?php
 $record_deleted = "记录已删除";
 $record_cannot_be_deleted = "无法删除记录";
 $pin_duplicat = "密码重复";

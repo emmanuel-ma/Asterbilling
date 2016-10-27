@@ -1,4 +1,4 @@
-<?
+<?php
 //En for mangaer
 $reload_info = "- Reset Asterisk (all active calls will not be dropped)";
 $restart_info = "- Asterisk will be forced to restart (all active calls will be dropped)";

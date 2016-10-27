@@ -1,4 +1,4 @@
-<?
+<?php
 $reseller = "Distribuidor";
 $reseller_name = "Nome do Distribuidor";
 $group_name = "Callshop";

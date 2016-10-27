@@ -1,4 +1,4 @@
-<?
+<?php
 $select_rate_table = "Seleccione la tabla de tarifas";
 $select_table = "Seleccione la tabla";
 $myrate = "Tarifas Cliente";

@@ -192,9 +192,10 @@ class DB_mysql extends DB_common
      */
     function connect($dsn, $persistent = false)
     {
-        if (!PEAR::loadExtension('mysql')) {
+        // Deprecated since version PHP 5.3
+        /*if (!PEAR::loadExtension('mysql')) {
             return $this->raiseError(DB_ERROR_EXTENSION_NOT_FOUND);
-        }
+        }*/
 
         $this->dsn = $dsn;
         if ($dsn['dbsyntax']) {
@@ -794,11 +795,13 @@ class DB_mysql extends DB_common
      */
     function escapeSimple($str)
     {
-        if (function_exists('mysql_real_escape_string')) {
+        return @mysql_real_escape_string($str, $this->connection);
+        // mysql_escape_string deprecated since version PHP 5.3
+        /*if (function_exists('mysql_real_escape_string')) {
             return @mysql_real_escape_string($str, $this->connection);
         } else {
             return @mysql_escape_string($str);
-        }
+        }*/
     }
 
     // }}}

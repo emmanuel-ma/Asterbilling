@@ -21,7 +21,7 @@ function processForm($aFormValues)
 {
 	global $config;
 
-	list ($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = split ("_", $aFormValues['locate']);	
+	list ($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = preg_split ("/_/", $aFormValues['locate']);	
 	//get locate parameter
 	$locate=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'login');	
 
@@ -50,7 +50,7 @@ function processForm($aFormValues)
 
 	if (array_key_exists("username",$aFormValues))
 	{
-		if (ereg("[0-9a-zA-Z]+",$aFormValues['username']) && ereg("[0-9a-zA-Z]+",$aFormValues['password']))
+		if (preg_match("/[0-9a-zA-Z]+/",$aFormValues['username']) && preg_match("/[0-9a-zA-Z]+/",$aFormValues['password']))
 		{
 		  // passed
 			return processAccountData($aFormValues);
@@ -93,7 +93,7 @@ function init($aFormValue){
 		$language = $aFormValue['locate'];
 	}
 
-	list($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = split ("_", $language);	//get locate parameter
+	list($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = preg_split ("/_/", $language);	//get locate parameter
 
 	$locate=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'login');			//init localization class
 	$objResponse->addAssign("titleDiv","innerHTML",$locate->Translate("User title"));
@@ -151,7 +151,7 @@ function processAccountData($aFormValues)
 {
 	global $db,$config;
 
-	list ($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = split ("_", $aFormValues['locate']);	
+	list ($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = preg_split ("/_/", $aFormValues['locate']);	
 	//get locate parameter
 	$locate=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'login');	
 
@@ -224,7 +224,7 @@ function processAccountData($aFormValues)
 				$_SESSION['curuser']['usertype'] = "clid";
 				$_SESSION['curuser']['clidid'] = $clid['id'];
 				$_SESSION['curuser']['groupid'] = $clid['groupid'];
-				list($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = split ("_", $aFormValues['locate']);
+				list($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = preg_split ("/_/", $aFormValues['locate']);
 
 				$configstatus = common::read_ini_file($config['system']['astercc_path'].'/astercc.conf',$asterccConfig);
 				if ($configstatus == -2){

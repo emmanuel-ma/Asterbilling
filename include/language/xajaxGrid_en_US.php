@@ -1,4 +1,4 @@
-<?
+<?php
 $edit = "Edit";
 $detail = "Detail";
 $delete = "Delete";

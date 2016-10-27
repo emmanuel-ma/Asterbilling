@@ -61,7 +61,7 @@ outcontext =  from-internal
 ; balance: set limit in balance to the call
 creditlimittype = balance
 
-upload_file_path = ./upload/
+upload_file_path = ./upload
 
 ; astercc will refresh the balance of the group
 ; set to 0 if you dont want it refresh automaticly

@@ -238,12 +238,12 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 
 	// Create object whit 5 cols and all data arrays set before.
 	$specArchive = false;
-	if ($_SESSION['curuser']['usertype'] == 'admin') $specArchive = 1;
+	if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin') $specArchive = 1;
 	$tableGrid = new ScrollTable(9,$start,$limit,$filter,$numRows,$content,$order,$specArchive);
 	$tableGrid->setHeader('title',$headers,$attribsHeader,$eventHeader,$edit=false,$delete=false,$detail=false);
 	$tableGrid->setAttribsCols($attribsCols);
 	$tableGrid->exportFlag = '1';//对导出标记进行赋值
-	if ($_SESSION['curuser']['usertype'] == 'admin'){
+	if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 		$tableGrid->deleteFlag = '1';//对导出标记进行赋值	
 	}
 	$tableGrid->addRowSearchMore($table,$fieldsFromSearch,$fieldsFromSearchShowAs,$filter,$content,$start,$limit,0,$typeFromSearch,$typeFromSearchShowAs,$stype,'',$allOrAnswer);
@@ -302,11 +302,11 @@ function searchFormSubmit($searchFormValue,$numRows,$limit,$id,$type){
 			$searchType[] = 'more';
 		}
 		
-		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$fieldArray = array('id','calldate','src','dst','srcname','channel','dstchannel','didnumber','duration','billsec','billsec_leg_a','disposition','accountcode','userfield','srcuid','dstuid','queue','calltype','credit','callshopcredit','resellercredit','groupid','resellerid','userid','accountid','destination','monitored','memo','dialstring','dialstatus','children','ischild','processed','customerid','crm_customerid','contactid','discount','payment','note','setfreecall','astercrm_groupid','hangupcause','hangupcausetxt');
 		}else if($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			$fieldArray = array('id','calldate','src','dst','srcname','channel','dstchannel','didnumber','duration','billsec','billsec_leg_a','disposition','accountcode','userfield','srcuid','dstuid','queue','calltype','credit','callshopcredit','groupid','resellerid','userid','accountid','destination','monitored','memo','dialstring','dialstatus','children','ischild','processed','customerid','crm_customerid','contactid','discount','payment','note','setfreecall','astercrm_groupid','hangupcause','hangupcausetxt');
-		}else if($_SESSION['curuser']['usertype'] == 'operator' && $_SESSION['curuser']['usertype'] == 'clid'){
+		}else if($_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'clid' || $_SESSION['curuser']['usertype'] == 'supervisor'){
 			$fieldArray = array('id','calldate','src','dst','srcname','channel','dstchannel','didnumber','duration','billsec','billsec_leg_a','disposition','accountcode','userfield','srcuid','dstuid','queue','calltype','credit','groupid','resellerid','userid','accountid','destination','monitored','memo','dialstring','dialstatus','children','ischild','processed','customerid','crm_customerid','contactid','discount','payment','note','setfreecall','astercrm_groupid','hangupcause','hangupcausetxt');
 		}
 
@@ -379,7 +379,7 @@ function archiveCDR($archiveDate){
 		}
 	}
 
-	$start_date = split('\ ',$start_date);
+	$start_date = preg_split('/\ /',$start_date);
 	$start_date = $start_date['0'];
 	$file_name = $start_date."_to_".$end_date;
 

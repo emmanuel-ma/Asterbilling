@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * curcdr.grid.inc.php
 
@@ -33,12 +33,14 @@ class Customer extends astercrm {
 		
 		$sql = "SELECT curcdr.*,clid.clid,resellergroup.resellername,accountgroup.groupname FROM curcdr LEFT JOIN clid ON clid.id = curcdr.userid LEFT JOIN resellergroup ON resellergroup.id = curcdr.resellerid LEFT JOIN accountgroup ON accountgroup.id = curcdr.groupid WHERE ";
 		
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0)
+                        || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator') {
-			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
-		} else if($_SESSION['curuser']['usertype'] == 'reseller') {
+		} else if($_SESSION['curuser']['usertype'] == 'reseller' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['groupid'] == 0)
+                        || $_SESSION['curuser']['usertype'] == 'technicaladmin') {
 			$sql .= " curcdr.resellerid = ".$_SESSION['curuser']['resellerid']." ";
+		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor') {
+			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
 
 		if($order == null){
@@ -79,12 +81,14 @@ class Customer extends astercrm {
 		
 		$sql = "SELECT curcdr.*,clid.clid,resellergroup.resellername,accountgroup.groupname FROM curcdr LEFT JOIN clid ON clid.id = curcdr.userid LEFT JOIN resellergroup ON resellergroup.id = curcdr.resellerid LEFT JOIN accountgroup ON accountgroup.id = curcdr.groupid WHERE ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0)
+                        || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator') {
-			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
-		} else if($_SESSION['curuser']['usertype'] == 'reseller') {
+		} else if($_SESSION['curuser']['usertype'] == 'reseller' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['groupid'] == 0)
+                        || $_SESSION['curuser']['usertype'] == 'technicaladmin') {
 			$sql .= " curcdr.resellerid = ".$_SESSION['curuser']['resellerid']." ";
+		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor') {
+			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
 
 		if ($joinstr!=''){
@@ -112,12 +116,14 @@ class Customer extends astercrm {
 		
 		$sql = "SELECT COUNT(*) AS numRows FROM curcdr LEFT JOIN clid ON clid.id = curcdr.userid LEFT JOIN resellergroup ON resellergroup.id = curcdr.resellerid LEFT JOIN accountgroup ON accountgroup.id = curcdr.groupid WHERE ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0) 
+                        || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator') {
-			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
-		} else if($_SESSION['curuser']['usertype'] == 'reseller') {
+		} else if($_SESSION['curuser']['usertype'] == 'reseller' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['groupid'] == 0)
+                        || $_SESSION['curuser']['usertype'] == 'technicaladmin') {
 			$sql .= " curcdr.resellerid = ".$_SESSION['curuser']['resellerid']." ";
+		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor') {
+			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
 
 		Customer::events($sql);
@@ -139,12 +145,15 @@ class Customer extends astercrm {
 		}
 		
 		$sql = "SELECT COUNT(*) AS numRows FROM curcdr LEFT JOIN clid ON clid.id = curcdr.userid LEFT JOIN resellergroup ON resellergroup.id = curcdr.resellerid LEFT JOIN accountgroup ON accountgroup.id = curcdr.groupid WHERE ";
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		
+                if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0)
+                        || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator') {
-			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
-		} else if($_SESSION['curuser']['usertype'] == 'reseller') {
+		} else if($_SESSION['curuser']['usertype'] == 'reseller' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['groupid'] == 0)
+                        || $_SESSION['curuser']['usertype'] == 'technicaladmin') {
 			$sql .= " curcdr.resellerid = ".$_SESSION['curuser']['resellerid']." ";
+		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor') {
+			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
 
 		if ($joinstr!=''){
@@ -164,12 +173,14 @@ class Customer extends astercrm {
 		
 		$sql = "SELECT curcdr.*,clid.clid,resellergroup.resellername,accountgroup.groupname FROM curcdr LEFT JOIN clid ON clid.id = curcdr.userid LEFT JOIN resellergroup ON resellergroup.id = curcdr.resellerid LEFT JOIN accountgroup ON accountgroup.id = curcdr.groupid WHERE ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0)
+                        || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator') {
-			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
-		} else if($_SESSION['curuser']['usertype'] == 'reseller') {
+		} else if($_SESSION['curuser']['usertype'] == 'reseller' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['groupid'] == 0)
+                        || $_SESSION['curuser']['usertype'] == 'technicaladmin') {
 			$sql .= " curcdr.resellerid = ".$_SESSION['curuser']['resellerid']." ";
+		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor') {
+			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
 
 		if ($joinstr!=''){
@@ -191,13 +202,16 @@ class Customer extends astercrm {
 		$joinstr = astercrm::createSqlWithStype($filter,$content,$stype);
 
 		$sql = "SELECT COUNT(*) AS numRows FROM curcdr LEFT JOIN clid ON clid.id = curcdr.userid LEFT JOIN resellergroup ON resellergroup.id = curcdr.resellerid LEFT JOIN accountgroup ON accountgroup.id = curcdr.groupid WHERE ";
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		
+                if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0) 
+                        || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator') {
-			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
-		} else if($_SESSION['curuser']['usertype'] == 'reseller') {
+		} else if($_SESSION['curuser']['usertype'] == 'reseller' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['groupid'] == 0)
+                        || $_SESSION['curuser']['usertype'] == 'technicaladmin') {
 			$sql .= " curcdr.resellerid = ".$_SESSION['curuser']['resellerid']." ";
-		}
+		} else if($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor') {
+			$sql .= " curcdr.groupid = ".$_SESSION['curuser']['groupid']." ";
+		} 
 
 		if ($joinstr!=''){
 			$joinstr=ltrim($joinstr,'AND'); //去掉最左边的AND
@@ -216,7 +230,7 @@ class Customer extends astercrm {
 			$joinstr=ltrim($joinstr,'AND');
 			$sql = 'DELETE FROM '.$table.' LEFT JOIN clid ON clid.id = curcdr.userid LEFT JOIN resellergroup ON resellergroup.id = curcdr.resellerid LEFT JOIN accountgroup ON accountgroup.id = curcdr.groupid WHERE '.$joinstr;
 		}else{
-			if($_SESSION['curuser']['usertype'] == 'admin'){
+			if($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 				$sql = 'TRUNCATE '.$table;
 			}else{
 				$sql = "DELETE FROM ".$table." WHERE ".$table.".groupid = '".$_SESSION['curuser']['groupid']."'";

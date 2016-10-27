@@ -6,6 +6,7 @@ require_once ("db_connect.php");
 require_once ('include/asterisk.class.php');
 require_once ('include/astercrm.class.php');
 require_once ('include/common.class.php');
+require_once ("accountgroup.cookie.php");
 
 /**
 *  function to process form data
@@ -23,7 +24,7 @@ function processForm($aFormValues)
 
 	$objResponse = new xajaxResponse();
 
-	list ($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = split ("_", $aFormValues['locate']);	
+	list ($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = preg_split ("/_/", $aFormValues['locate']);	
 	//get locate parameter
 	$locate=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'login');			//init localization class
 
@@ -50,7 +51,7 @@ function processForm($aFormValues)
 
 	if (array_key_exists("username",$aFormValues))
 	{
-		if (ereg("[0-9a-zA-Z]+",$aFormValues['username']) && ereg("[0-9a-zA-Z]+",$aFormValues['password']))
+		if (preg_match("/[0-9a-zA-Z]+/",$aFormValues['username']) && preg_match("/[0-9a-zA-Z]+/",$aFormValues['password']))
 		{
 		  // passed
 			return processAccountData($aFormValues);
@@ -99,15 +100,43 @@ function init($aFormValue){
 	}else{
 		$pagestyle = $aFormValue['pagestyle'];
 	}
+        
+        // Log out
+        if ( isset($_SESSION['curuser']) ) {
+            if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+		if ($_SERVER["HTTP_CLIENT_IP"]) {
+			$proxy = $_SERVER["HTTP_CLIENT_IP"];
+		} else {
+			$proxy = $_SERVER["REMOTE_ADDR"];
+		}
+            } else {
+		if (isset($_SERVER["HTTP_CLIENT_IP"])) {
+			$ip = $_SERVER["HTTP_CLIENT_IP"];
+		} else {
+			$ip = $_SERVER["REMOTE_ADDR"];
+		}
+            }
+            
+            $log['account_id'] = $_SESSION['curuser']['userid'];
+            $log['username'] = $_SESSION['curuser']['username'];
+            $log['usertype'] = $_SESSION['curuser']['usertype'];
+            $log['ip'] = $ip;
+            $log['action'] = 'logout';
+            $log['status'] = 'success';
+            $log['groupid'] = $_SESSION['curuser']['groupid'];
+            
+            astercrm::insertAccountLog($log);
+        }
+        
+	list($_SESSION['curuser']['language'],$_SESSION['curuser']['country']) = preg_split ("/_/", $language);	//get locate parameter
 
-	list($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = split ("_", $language);	//get locate parameter
-
-	$locate=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'login');			//init localization class
+	$locate=new Localization($_SESSION['curuser']['language'],$_SESSION['curuser']['country'],'login');			//init localization class
 	$objResponse->addAssign("titleDiv","innerHTML",$locate->Translate("manager title"));
 	$objResponse->addAssign("usernameDiv","innerHTML",$locate->Translate("username")."&nbsp;&nbsp;&nbsp;");
 	$objResponse->addAssign("passwordDiv","innerHTML",$locate->Translate("password")."&nbsp;&nbsp;&nbsp;");
 	$objResponse->addAssign("remembermeDiv","innerHTML",$locate->Translate("Remember me"));
 	$objResponse->addAssign("validcodeDiv","innerHTML",$locate->Translate("Valid Code")."&nbsp;&nbsp;&nbsp;");
+        $objResponse->addAssign("forgotDiv", "innerHTML", "<a href=\"forgot_login.php\">".$locate->Translate('forgot_password_option')."</a>");
 	$objResponse->addAssign("loginButton","value",$locate->Translate("submit"));
 	$objResponse->addAssign("loginButton","disabled",false);
 	$objResponse->addAssign("onclickMsg","value",$locate->Translate("please_waiting"));
@@ -164,7 +193,7 @@ function processAccountData($aFormValues)
 {
 	global $db,$config;
 
-	list ($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = split ("_", $aFormValues['locate']);	
+	list ($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = preg_split ("/_/", $aFormValues['locate']);	
 	//get locate parameter
 	$locate=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'login');
 	
@@ -217,7 +246,7 @@ function processAccountData($aFormValues)
 
 	if (!$bError)
 	{	
-		$query = "SELECT account.*, accountgroup.accountcode,accountgroup.allowcallback as allowcallbackgroup,resellergroup.allowcallback as allowcallbackreseller,accountgroup.limittype FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid WHERE username='" . $aFormValues['username'] . "'";
+		$query = "SELECT account.*, accountgroup.accountcode,accountgroup.allowcallback as allowcallbackgroup,resellergroup.allowcallback as allowcallbackreseller,accountgroup.limittype,accountgroup.receipt_printer FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid WHERE username='" . $aFormValues['username'] . "'";
 		$res = $db->query($query);
 		if($res->fetchInto($list))
 		{	
@@ -244,6 +273,31 @@ function processAccountData($aFormValues)
 					$language = 'en_US';
 					$checked = false;
 				}
+                                
+                                // Verify Callshop Cookie exist for operator users validation
+                                $cookie = new AccountgroupCookie();
+                                if ( $list['usertype'] == 'operator' ) {
+                                    if ( !$cookie->exist() ) { //!isset($_COOKIE["CALLSHOP"]) ) {
+                                        $objResponse->addAlert($locate->Translate("no_pass_callshop_validation"));
+                                        $objResponse->addAssign("loginButton","value",$locate->Translate("submit"));
+                                        $objResponse->addAssign("loginButton","disabled",false);
+                                        return $objResponse;
+                                    } else {
+                                        $query = "SELECT * FROM accountgroup WHERE id = '".$cookie->getGroupid()."'";
+                                        $res = $db->query($query);
+                                        
+                                        if ($res->fetchInto($group_exist)) {
+                                            astercrm::updateField("account","groupid",$group_exist['id'],$list['id']);
+                                            $log['groupid'] = $group_exist['id'];
+                                            $list['groupid'] = $group_exist['id'];
+                                        } else{
+                                            $objResponse->addAlert($locate->Translate("no_pass_callshop_validation"));
+                                            $objResponse->addAssign("loginButton","value",$locate->Translate("submit"));
+                                            $objResponse->addAssign("loginButton","disabled",false);
+                                            return $objResponse;
+                                        }
+                                    }
+                                }
 
 				$_SESSION = array();
 				$_SESSION['curuser']['username'] = trim($aFormValues['username']);
@@ -253,6 +307,7 @@ function processAccountData($aFormValues)
 				$_SESSION['curuser']['groupid'] = $list['groupid'];
 				$_SESSION['curuser']['resellerid'] = $list['resellerid'];
 				$_SESSION['curuser']['limittype'] = $list['limittype'];
+                                $_SESSION['curuser']['receipt_printer'] = $list['receipt_printer'];
 
 				$configstatus = common::read_ini_file($config['system']['astercc_path'].'/astercc.conf',$asterccConfig);
 				if ($configstatus == -2){
@@ -285,7 +340,7 @@ function processAccountData($aFormValues)
 	//				else{
 	//				}
 
-				list($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = split ("_", $aFormValues['locate']);
+				list($_SESSION['curuser']['country'],$_SESSION['curuser']['language']) = preg_split ("/_/", $aFormValues['locate']);
 	/*
 		if you dont want check manager status and show device status when user login 
 		please uncomment these three line
@@ -297,16 +352,19 @@ function processAccountData($aFormValues)
 					} else {
 						$objResponse->addScript('window.location.href="systemstatus_simple.php";');
 					}
-				} else {
+				} else if ($_SESSION['curuser']['usertype'] == 'supervisor' || $_SESSION['curuser']['usertype'] == 'hrsupervisor'){
+                                	$objResponse->addScript('window.location.href="checkout.php";');
+                                } else {
 					$objResponse->addScript('window.location.href="account.php";');
 				}
 
 				astercrm::insertAccountLog($log);
+                                
 				return $objResponse;
 
 
 				//check AMI connection
-				$myAsterisk = new Asterisk();
+				/*$myAsterisk = new Asterisk();
 				$myAsterisk->config['asmanager'] = $config['asterisk'];
 				$res = $myAsterisk->connect();
 					
@@ -328,7 +386,7 @@ function processAccountData($aFormValues)
 				
 				$objResponse->addAssign("formDiv","innerHTML",$html);
 				$objResponse->addClear("titleDiv","innerHTML");
-				$objResponse->addScript("xajax.$('btnContinue').focus();");
+				$objResponse->addScript("xajax.$('btnContinue').focus();");*/
 			} else{
 				//$log['account_id'] = 0;
 				$log['failedtimes'] = $failedtimes + 1;

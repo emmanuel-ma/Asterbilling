@@ -44,6 +44,7 @@ require_once ('include/astercrm.class.php');
 require_once ('include/asterevent.class.php');
 require_once ('include/common.class.php');
 require_once ("accountgroup.common.php");
+require_once ("accountgroup.cookie.php");
 
 /**
 *  initialize page elements
@@ -160,13 +161,16 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fields[] = 'resellername';
 	$fields[] = 'accountcode';
 	$fields[] = 'callback';
-	$fields[] = 'creditlimit';
-	$fields[] = 'limittype';
-	$fields[] = 'curcredit';
-	$fields[] = 'credit_clid';
-	$fields[] = 'credit_group';
-	$fields[] = 'credit_reseller';
-	$fields[] = 'group_multiple';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin') {
+            $fields[] = 'creditlimit';
+            $fields[] = 'limittype';
+            $fields[] = 'curcredit';
+            $fields[] = 'credit_clid';
+            $fields[] = 'credit_group';
+            $fields[] = 'credit_reseller';
+            $fields[] = 'group_multiple';
+        }
 
 	// HTML table: Headers showed
 	$headers = array();
@@ -174,13 +178,16 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$headers[] = $locate->Translate("Name").'<br/>';
 	$headers[] = $locate->Translate("Reseller").'<br/>';
 	$headers[] = $locate->Translate("Callback").'<br/>';
-	$headers[] = $locate->Translate("Credit Limit").'<br/>';
-	$headers[] = $locate->Translate("Limit Type").'<br/>';
-	$headers[] = $locate->Translate("Cur Credit").'<br/>';
-	$headers[] = $locate->Translate("Clid Credit").'<br/>';
-	$headers[] = $locate->Translate("Group Credit").'<br/>';
-	$headers[] = $locate->Translate("Reseller Credit").'<br/>';
-	$headers[] = $locate->Translate("Group Billsec Multiple").'<br/>';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin') {
+            $headers[] = $locate->Translate("Credit Limit").'<br/>';
+            $headers[] = $locate->Translate("Limit Type").'<br/>';
+            $headers[] = $locate->Translate("Cur Credit").'<br/>';
+            $headers[] = $locate->Translate("Clid Credit").'<br/>';
+            $headers[] = $locate->Translate("Group Credit").'<br/>';
+            $headers[] = $locate->Translate("Reseller Credit").'<br/>';
+            $headers[] = $locate->Translate("Group Billsec Multiple").'<br/>';
+        }
 
 	// HTML table: hearders attributes
 	$attribsHeader = array();
@@ -188,13 +195,16 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$attribsHeader[] = 'width=""';
 	$attribsHeader[] = 'width=""';
 	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
+        	
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin') {
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+        }
 
 	// HTML Table: columns attributes
 	$attribsCols = array();
@@ -202,13 +212,16 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin') {
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+        }
 
 	// HTML Table: If you want ascendent and descendent ordering, set the Header Events.
 	$eventHeader = array();
@@ -216,13 +229,16 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","groupname","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","resellername","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","allowcallback","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","creditlimit","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","limittype","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","curcredit","'.$divName.'","ORDERING");return false;\'';;
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_clid","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_group","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_reseller","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","group_multiple","'.$divName.'","ORDERING");return false;\'';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin') {
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","creditlimit","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","limittype","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","curcredit","'.$divName.'","ORDERING");return false;\'';;
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_clid","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_group","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_reseller","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","group_multiple","'.$divName.'","ORDERING");return false;\'';
+        }
 
 	// Select Box: fields table.
 	$fieldsFromSearch = array();
@@ -231,13 +247,17 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fieldsFromSearch[] = 'accountgroup.accountcode';
 	$fieldsFromSearch[] = 'accountgroup.allowcallback';
 	$fieldsFromSearch[] = 'accountgroup.creditlimit';
-	$fieldsFromSearch[] = 'accountgroup.limittype';
-	$fieldsFromSearch[] = 'accountgroup.curcredit';
-	$fieldsFromSearch[] = 'accountgroup.credit_clid';
-	$fieldsFromSearch[] = 'accountgroup.credit_group';
-	$fieldsFromSearch[] = 'accountgroup.credit_reseller';
-	$fieldsFromSearch[] = 'accountgroup.group_multiple';
-	$fieldsFromSearch[] = 'accountgroup.customer_multiple';
+        	
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin') {
+            $fieldsFromSearch[] = 'accountgroup.limittype';
+            $fieldsFromSearch[] = 'accountgroup.curcredit';
+            $fieldsFromSearch[] = 'accountgroup.credit_clid';
+            $fieldsFromSearch[] = 'accountgroup.credit_group';
+            $fieldsFromSearch[] = 'accountgroup.credit_reseller';
+            $fieldsFromSearch[] = 'accountgroup.group_multiple';
+            $fieldsFromSearch[] = 'accountgroup.customer_multiple';
+        }
+        
 	$fieldsFromSearch[] = 'accountgroup.addtime';
 
 	// Selecct Box: Labels showed on search select box.
@@ -246,19 +266,22 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fieldsFromSearchShowAs[] = $locate->Translate("Reseller Name");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Account Code");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Callback");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Credit Limit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Limit Type");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Cur Credit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Clid Credit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Group Credit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Reseller Credit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Group Billsec Multiple");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Customer Billsec Multiple");
+        	
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin') {
+            $fieldsFromSearchShowAs[] = $locate->Translate("Credit Limit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Limit Type");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Cur Credit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Clid Credit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Group Credit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Reseller Credit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Group Billsec Multiple");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Customer Billsec Multiple");
+        }
 	$fieldsFromSearchShowAs[] = $locate->Translate("Last Update");
 
 	// Create object whit 5 cols and all data arrays set before.
 	$table = new ScrollTable(6,$start,$limit,$filter,$numRows,$content,$order);
-	$table->setHeader('title',$headers,$attribsHeader,$eventHeader,1,1,0);
+	$table->setHeader('title',$headers,$attribsHeader,$eventHeader,TRUE,TRUE,FALSE,TRUE);
 	$table->setAttribsCols($attribsCols);
 	$table->exportFlag = '1';//对导出标记进行赋值
 
@@ -292,21 +315,24 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 		$rowc[] = $row['groupname'];
 		$rowc[] = $row['resellername'];
 		$rowc[] = $row['allowcallback'];
-		$rowc[] = $row['creditlimit'];
-		$rowc[] = $row['limittype'];
-		$rowc[] = $row['curcredit'];
-		$rowc[] = $row['credit_clid'];
-		$rowc[] = $row['credit_group'];
-		$rowc[] = $row['credit_reseller'];
+                	
+                if ($_SESSION['curuser']['usertype'] != 'technicaladmin') {
+                    $rowc[] = $row['creditlimit'];
+                    $rowc[] = $row['limittype'];
+                    $rowc[] = $row['curcredit'];
+                    $rowc[] = $row['credit_clid'];
+                    $rowc[] = $row['credit_group'];
+                    $rowc[] = $row['credit_reseller'];
 			//astercc::readAmount($row['id'],null,$row['billingtime'],null,'callshopcredit');
-		$rowc[] = $row['group_multiple'];
+                    $rowc[] = $row['group_multiple'];
+                }
 
 		if(!empty($row['limittype']) && ($row['creditlimit'] - $row['curcredit']) < 0 ){//|| $row['curcredit'] < 0)
 			$trstyle = 'style="background-color:red;"';
 		} else {
 			$trstyle = '';
 		}
-		$table->addRow("accountgroup",$rowc,1,1,0,$divName,$fields,$trstyle);
+		$table->addRow("accountgroup",$rowc,TRUE,TRUE,FALSE,$divName,$fields,$trstyle,TRUE);
  	}
  	
  	// End Editable Zone
@@ -494,6 +520,14 @@ function searchFormSubmit($searchFormValue,$numRows,$limit,$id,$type){
 		}else{
 			$objResponse->addAssign("msgZone", "innerHTML", $locate->Translate("rec_cannot_delete")); 
 		}
+        }elseif($type == "cert-install"){
+                $cookie = new AccountgroupCookie();
+                $cookie->set($id, 365*3);
+                $objResponse->addScript("xajax_showGrid(0,".ROWSXPAGE.",'','','')");
+        }elseif($type == "cert-remove"){
+                $cookie = new AccountgroupCookie();
+                $cookie->remove();
+                $objResponse->addScript("xajax_showGrid(0,".ROWSXPAGE.",'','','')");
 	}else{
 		$html = createGrid($numRows, $limit,$searchField, $searchContent, $searchField, $divName, "",$searchType);
 		$objResponse->addClear("msgZone", "innerHTML");

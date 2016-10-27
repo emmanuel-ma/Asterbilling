@@ -34,24 +34,25 @@
 	$aFormValues['resellerid']=$arr_action[1];
 	$aFormValues['groupid']=$arr_action[2];
 	$aFormValues['sltBooth']=$arr_action[3];
-	$aFormValues['sdate']=$arr_action[4];
-	$aFormValues['edate']=$arr_action[5];
-	$aFormValues['listType']=$arr_action[6];
-	$aFormValues['hidCurpeer']=$arr_action[7];
+        $aFormValues['sltAccount']=$arr_action[4];
+	$aFormValues['sdate']=$arr_action[5];
+	$aFormValues['edate']=$arr_action[6];
+	$aFormValues['listType']=$arr_action[7];
+	$aFormValues['hidCurpeer']=$arr_action[8];
 	
 	if ($aFormValues['sltBooth'] == '' && $aFormValues['hidCurpeer'] != ''){
 		$aFormValues['sltBooth'] = $aFormValues['hidCurpeer'];
 	}
-	list ($syear,$smonth,$sday) = split("[ -]",$aFormValues['sdate']);
+	list ($syear,$smonth,$sday) = preg_split("/[ -]/",$aFormValues['sdate']);
 	$syear = (int)$syear;
 	$smonth = (int)$smonth;
 	$sday = (int)$sday;
-	list ($eyear,$emonth,$eday) = split("[ -]",$aFormValues['edate']);
+	list ($eyear,$emonth,$eday) = preg_split("/[ -]/",$aFormValues['edate']);
 	$eyear = (int)$eyear;
 	$emonth = (int)$emonth;
 	$eday = (int)$eday;
 	$color=array('#1F8FA1','#1F8FA1','#848484','#ffccff','#CACFBE','#DEF799','#FF33C9','#FF653F','#669900','#ffcc99','#ffccff','#99ccff','#ffcc00');
-	$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sdate'],$aFormValues['edate'],'destination',$aFormValues['action'],'limit');
+	$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], $aFormValues['sdate'],$aFormValues['edate'],'destination',$aFormValues['action'],'limit');
 	$ii=1;
 	while	($res->fetchInto($row)){
 		$row['markup']=$row['callshopcredit'] - $row['resellercredit'];

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * xhtml.inc.php :: Main XajaxGrid class file
  *
@@ -44,7 +44,7 @@
 
 
 require_once ('localization.class.php');
-
+require_once (__DIR__.'/../accountgroup.cookie.php');
 
 if (isset($_SESSION['curuser']['country'])){
 	$GLOBALS['local_grid']=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'xajaxGrid');
@@ -161,7 +161,7 @@ class ScrollTable{
 	*
 	*/
 
-	function setHeader($class,$headers,$attribs,$events,$edit=true,$delete=true,$detail=true){
+	function setHeader($class,$headers,$attribs,$events,$edit=true,$delete=true,$detail=true,$certificate=false){
 	
 		global $local_grid;
 		$ind = 0;
@@ -212,6 +212,13 @@ class ScrollTable{
 				</th>';
 			}
 		}
+                
+                if($certificate)
+			$this->header .= '
+				<th style="text-align: center" class="'.$class.'" width="5%" nowrap>
+					'.$local_grid->Translate("certificate").'
+				</th>';
+                
 		$this->header .= '
 			</tr>';
 	}
@@ -241,7 +248,7 @@ class ScrollTable{
 	*
 	*/
 
-	function addRow($table,$arr,$edit=true,$delete=true,$detail=true,$divName="grid",$fields=null,$trstyle){
+	function addRow($table,$arr,$edit=true,$delete=true,$detail=true,$divName="grid",$fields=null,$trstyle='',$certificate=false){
 		global $local_grid;
 		$nameRow = $divName."Row".$arr[0];
 	    $row = '<tr id="'.$nameRow.'" class="'.$this->rowStyle.'" '.$trstyle.'>'."\n";
@@ -305,6 +312,21 @@ class ScrollTable{
 					</td>';
 			}
 		}
+                if($certificate) {
+                        $cookie = new AccountgroupCookie();
+                        
+                        if ( $cookie->exist() && ($cookie->getGroupid() == $arr[0]) )
+                            $cert_status = $local_grid->Translate("Expire").":&nbsp;".date('d/m/y',$cookie->getExpirationTime());
+                        else
+                            $cert_status = "";
+                            
+			$row .= '
+					<td align="center" width="5%">
+                                                '.$cert_status.'
+						<a title="'.$local_grid->Translate("install certificate").'" href="?" onClick="if (confirm(\''.$local_grid->Translate("install_confirm").'\'))  searchFormSubmit(0,5,\''.$arr[0].'\',\'cert-install\');return false;"><img src="skin/default/images/install.png" border="0"></a>/
+                                                <a title="'.$local_grid->Translate("remove certificate").'" href="?" onClick="if (confirm(\''.$local_grid->Translate("remove_confirm").'\'))  searchFormSubmit(0,5,\''.$arr[0].'\',\'cert-remove\');return false;"><img src="skin/default/images/remove.png" border="0"></a>
+					</td>';
+                }
 		$row .= "</tr>\n";
 		$this->rows .= $row;
 
@@ -388,7 +410,7 @@ class ScrollTable{
 	* customer addRowSearth
 	*/
     //增加搜索选项
-	function addRowSearchMore($table,$fieldsFromSearch,$fieldsFromSearchShowAs,$filter,$content,$start,$limit, $withNewButton = 1,$typeFromSearch = null,$typeFromSearchShowAs = null,$stype = null,$displaymode,$radioFieldVal = null){
+	function addRowSearchMore($table,$fieldsFromSearch,$fieldsFromSearchShowAs,$filter,$content,$start,$limit, $withNewButton = 1,$typeFromSearch = null,$typeFromSearchShowAs = null,$stype = null,$displaymode='off',$radioFieldVal = null){
 		global $local_grid;
 		$ind = 0;
 		$ind_type = 0;

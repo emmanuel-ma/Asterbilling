@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * clid.grid.inc.php
 * clid操作类
@@ -47,9 +47,9 @@ class Customer extends astercrm
 		
 		$sql = "SELECT clid.*, groupname,resellername FROM clid LEFT JOIN accountgroup ON accountgroup.id = clid.groupid LEFT JOIN resellergroup ON resellergroup.id = clid.resellerid ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " WHERE clid.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql .= " WHERE clid.id = ".$_SESSION['curuser']['clidid']." ";
@@ -94,9 +94,9 @@ class Customer extends astercrm
 		}
 
 		$sql = "SELECT clid.*, groupname,resellername FROM clid LEFT JOIN accountgroup ON accountgroup.id = clid.groupid LEFT JOIN resellergroup ON resellergroup.id = clid.resellerid WHERE ";
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " clid.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql .= " WHERE clid.id = ".$_SESSION['curuser']['clidid']." ";
@@ -127,9 +127,9 @@ class Customer extends astercrm
 	function &getNumRows($filter = null, $content = null){
 		global $db;
 		
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql = " SELECT COUNT(*) FROM clid LEFT JOIN accountgroup ON accountgroup.id = clid.groupid LEFT JOIN resellergroup ON resellergroup.id = clid.resellerid";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql = " SELECT COUNT(*) FROM clid LEFT JOIN accountgroup ON accountgroup.id = clid.groupid LEFT JOIN resellergroup ON resellergroup.id = clid.resellerid WHERE clid.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql = " SELECT COUNT(*) FROM clid LEFT JOIN accountgroup ON accountgroup.id = clid.groupid LEFT JOIN resellergroup ON resellergroup.id = clid.resellerid WHERE clid.id = ".$_SESSION['curuser']['clidid']." ";
@@ -156,9 +156,9 @@ class Customer extends astercrm
 		}
 
 		$sql = "SELECT COUNT(*) FROM clid LEFT JOIN accountgroup ON accountgroup.id = clid.groupid LEFT JOIN resellergroup ON resellergroup.id = clid.resellerid WHERE ";
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " clid.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}elseif ($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql .= " clid.id = ".$_SESSION['curuser']['clidid']." ";
@@ -180,9 +180,9 @@ class Customer extends astercrm
 		$joinstr = astercrm::createSqlWithStype($filter,$content,$stype);
 
 		$sql = "SELECT clid.*, groupname,resellername FROM clid LEFT JOIN accountgroup ON accountgroup.id = clid.groupid LEFT JOIN resellergroup ON resellergroup.id = clid.resellerid WHERE ";
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['resellerid'] == 0){
 			$sql .= " clid.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}elseif ($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql .= " clid.id = ".$_SESSION['curuser']['clidid']." ";
@@ -209,9 +209,9 @@ class Customer extends astercrm
 		$joinstr = astercrm::createSqlWithStype($filter,$content,$stype);
 
 		$sql = "SELECT COUNT(*) FROM clid LEFT JOIN accountgroup ON accountgroup.id = clid.groupid LEFT JOIN resellergroup ON resellergroup.id = clid.resellerid WHERE ";
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " clid.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}elseif ($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql .= " clid.id = ".$_SESSION['curuser']['clidid']." ";
@@ -252,8 +252,9 @@ class Customer extends astercrm
 		*/
 		$reselleroptions = '';
 		$reseller = astercrm::getAll('resellergroup');
+                $permissionadmin = ($_SESSION['curuser']['usertype'] == 'technicaladmin') ?'style="display: none;"' :'';
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$reselleroptions .= '<select id="resellerid" name="resellerid" onchange="setGroup();">';
 			$reselleroptions .= '<option value="0"></option>';
 			while	($reseller->fetchInto($row)){
@@ -277,7 +278,7 @@ class Customer extends astercrm
 			}
 		}
 		$group = astercrm::getAll('accountgroup','resellerid',$_SESSION['curuser']['resellerid']);
-		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$groupoptions .= '<select id="groupid" name="groupid">';
 			$groupoptions .= "<OPTION value='0'></OPTION>";
 			while	($group->fetchInto($row)){
@@ -355,11 +356,12 @@ class Customer extends astercrm
 					<td align="left"><input type="text" id="display" name="display" size="25" maxlength="20"></td>
 				</tr>';
 			if($config['system']['setclid'] == 1){
-				$html .= '<tr>
+				$html .= 
+                                '<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Credit Limit").'</td>
 					<td align="left"><input type="text" id="creditlimit" name="creditlimit" size="25" maxlength="30"></td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Limit Type").'</td>
 					<td align="left">
 					<select id="limittype" name="limittype">
@@ -432,8 +434,9 @@ class Customer extends astercrm
 		}
 		$reselleroptions = '';
 		$reseller = astercrm::getAll('resellergroup');
+                $permissionadmin = ($_SESSION['curuser']['usertype'] == 'technicaladmin') ?'style="display: none;"' :'';
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$reselleroptions .= '<select id="resellerid" name="resellerid" onchange="setGroup();">';
 			$reselleroptions .= '<option value="0"></option>';
 			while	($reseller->fetchInto($row)){
@@ -462,7 +465,7 @@ class Customer extends astercrm
 		}
 
 		$group = astercrm::getAll('accountgroup','resellerid',$clid['resellerid']);
-		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$groupoptions .= '<select id="groupid" name="groupid">';
 			$groupoptions .= "<OPTION value='0'></OPTION>";
 			while	($group->fetchInto($row)){
@@ -551,12 +554,12 @@ class Customer extends astercrm
 				
 				if($config['system']['setclid'] == 1){
 
-					$html .= '<tr>
+					$html .= '<tr '.$permissionadmin.'>
 						<td nowrap align="left">'.$locate->Translate("Credit Limit").'*</td>
 						<td align="left"><input type="text" id="creditlimit" name="creditlimit" size="25" maxlength="30" value="'.$clid['creditlimit'].'" '.$readonly.'></td>
 					</tr>
 
-					<tr>
+					<tr '.$permissionadmin.'>
 						<td nowrap align="left">'.$locate->Translate("Cur Credit").'</td>
 						<td align="left">
 						<input type="text" id="curcreditshow" name="curcreditshow" size="25" maxlength="100" value="'.$clid['curcredit'].'" readonly>
@@ -564,7 +567,8 @@ class Customer extends astercrm
 					</td>
 					</tr>';
 					if ($_SESSION['curuser']['usertype'] != 'clid'){
-						$html .= '<tr>
+						$html .= 
+                                                '<tr '.$permissionadmin.'>
 							<td nowrap align="left">'.$locate->Translate("Operate").'</td>
 							<td align="left">
 								<select id="creditmodtype" name="creditmodtype" onchange="showComment(this)">
@@ -574,12 +578,13 @@ class Customer extends astercrm
 								</select>
 								<input type="text" id="creditmod" name="creditmod" size="15" maxlength="100" value="" disabled><p>'.$locate->Translate("Comment").' :&nbsp;<input type="text" id="comment" name="comment" size="18" maxlength="20" value="" disabled></p>
 							</td>
-						</tr>
-						<tr>';
+						</tr>';
 					}
-					$html .= '<td nowrap align="left">'.$locate->Translate("Limit Type").'</td>
-					<td align="left">
-					<select id="limittype" name="limittype" '.$readonly.'>';				
+					$html .= 
+                                                '<tr '.$permissionadmin.'>
+                                                    <td nowrap align="left">'.$locate->Translate("Limit Type").'</td>
+                                                    <td align="left">
+                                                        <select id="limittype" name="limittype" '.$readonly.'>';				
 					if ($clid['limittype'] == "postpaid"){
 						$html .='
 							<option value="">'.$locate->Translate("No limit").'</option>
@@ -596,6 +601,8 @@ class Customer extends astercrm
 							<option value="prepaid">'.$locate->Translate("Prepaid").'</option>
 							<option value="postpaid">'.$locate->Translate("Postpaid").'</option>';
 					}
+                                        $html .=    '</td>
+                                                </tr>';
 				}
 
 

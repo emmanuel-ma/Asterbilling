@@ -9,6 +9,7 @@ require_once ('include/asterevent.class.php');
 require_once ('include/asterisk.class.php');
 require_once ('include/astercrm.class.php');
 require_once ('include/common.class.php');
+require_once ('accountgroup.cookie.php');
 
 if($config['customers']['enable']){
 	// define database connection string
@@ -50,6 +51,11 @@ function init(){
 	if ( $group_row['grouptagline'] != ''){
 		$titleHtml .= '<h2 style="padding: 0 0 0 0;position: relative;font-size: 11pt;color: #FJDSKB;">'.$group_row['grouptagline'].'</h2>';
 	}
+        
+        $cookie = new AccountgroupCookie();
+        $titleHtml .= '<span style="padding: 0 0 0 0;position: relative;font-size: 10pt;color: #FF0000;">'.$locate->Translate("Expiration Certificate").":&nbsp;".date("Y-m-d", $cookie->getExpirationTime())."</span>";
+        $titleHtml .= '<br/><span style="padding: 0 0 0 0;position: relative;font-size: 10pt;color: #FF0000;">'.$locate->Translate("Receipt Printer").":&nbsp;".$_SESSION['curuser']['receipt_printer']."</span>";
+        
 	if (isset($titleHtml)){
 		//$titleHtml .= '<div style="position:absolute;top:85px;left:0px;width:800px"><hr color="#F1F1F1"></div>';
 		$objResponse->addAssign("divTitle", "innerHTML", $titleHtml);
@@ -149,9 +155,9 @@ function setGroupBalance(){
 	$startdate = date("Y-m-d")." 00:00";
 	$enddate = date("Y-m-d")." 23:59";
 	if($config['system']['useHistoryCdr'] == 1){
-		$sql = "SELECT SUM(credit) AS todayAmount,SUM(callshopcredit) AS todayCost FROM historycdr WHERE calldate > '".$startdate."' AND calldate < '".$enddate."' AND groupid = ".$_SESSION['curuser']['groupid'];
+		$sql = "SELECT SUM(credit) AS todayAmount,SUM(callshopcredit) AS todayCost FROM historycdr WHERE calldate > '".$startdate."' AND calldate < '".$enddate."' AND groupid = ".$_SESSION['curuser']['groupid']." AND accountid = ".$_SESSION['curuser']['userid'];
 	}else{
-		$sql = "SELECT SUM(credit) AS todayAmount,SUM(callshopcredit) AS todayCost FROM mycdr WHERE calldate > '".$startdate."' AND calldate < '".$enddate."' AND groupid = ".$_SESSION['curuser']['groupid'];
+		$sql = "SELECT SUM(credit) AS todayAmount,SUM(callshopcredit) AS todayCost FROM mycdr WHERE calldate > '".$startdate."' AND calldate < '".$enddate."' AND groupid = ".$_SESSION['curuser']['groupid']." AND accountid = ".$_SESSION['curuser']['userid'];
 	}
 
 	$row = $db->getRow($sql);

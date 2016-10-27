@@ -221,7 +221,11 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	
 	$table->setAttribsCols($attribsCols);
 	
-	$table->deleteFlag = '1';//对导出标记进行赋值
+        if($_SESSION['curuser']['usertype'] == 'supervisor')
+            $table->deleteFlag = '0';//对导出标记进行赋值
+	else
+            $table->deleteFlag = '1';//对导出标记进行赋值
+        
 	$table->exportFlag = '0';//对导出标记进行赋值
 	$table->multiEditFlag = '0';//对批量修改标记进行赋值
 	

@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * astercrm.php
 * astercrm公用类
@@ -249,6 +249,7 @@ Class astercrm extends PEAR{
 				."usertype='".$f['usertype']."',"
 				."groupid='".$f['groupid']."', "
 				."resellerid='".$f['resellerid']."', "
+                                ."email='".$f['email']."', "
 				."addtime= now() ";
 		
 		if($config['synchronize']['id_autocrement_byset']){
@@ -285,11 +286,57 @@ Class astercrm extends PEAR{
 				."status='".$f['status']."', "
 				."failedcause='".$f['failedcause']."', "
 				."failedtimes='".$f['failedtimes']."', "
+                                .(isset($f['groupid']) ?"groupid='".$f['groupid']."', " :"")
 				."cretime=now()" ;
 		//print $sql;
 		//exit;
 		astercrm::events($sql);
 		$res =& $db->query($sql);
+		return $res;
+	}
+        
+        function readReportAccountLog($resellerid, $groupid, $account, $sdate, $edate, $groupby = 'account',$orderby=''){
+		global $db,$config;
+                
+                $query = "SELECT DATE(cretime) AS credate";
+                
+                if ( $groupby == 'group') {
+                    $query .= ", groupid AS gid, GROUP_CONCAT(DISTINCT CONCAT(TIME(cretime),',',action,',',username) ORDER BY cretime ASC SEPARATOR '|') AS igroup";
+                } elseif ( $groupby == 'account' ) {
+                    $query .= ", username AS gid, GROUP_CONCAT(DISTINCT CONCAT(TIME(cretime),',',action,',',groupid) ORDER BY cretime ASC SEPARATOR '|') AS igroup";
+                }
+                
+                $query .= " FROM account_log WHERE cretime >= '$sdate' AND  cretime <= '$edate' AND status = 'success' ";
+                
+		/*if ( ($groupid == '' || $groupid == 0) && ($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator')){
+			$groupid = $_SESSION['curuser']['groupid'];
+		}
+
+		if ( ($resellerid == '' || $resellerid == 0) && $_SESSION['curuser']['usertype'] == 'reseller' ){
+			$resellerid = $_SESSION['curuser']['resellerid'];
+		}*/
+
+		if ($resellerid != 0 && $resellerid != '')
+                    $query .= " AND account_id IN (SELECT id FROM account WHERE resellerid = $resellerid AND usertype = 'operator')";
+                elseif ($groupid != 0 && $groupid != '')
+                    $query .= " AND account_id IN (SELECT id FROM account WHERE usertype = 'operator') AND groupid = $groupid";
+                elseif ($account != 0 && $account != '')
+                    $query .= " AND account_id = $account";
+		else
+                    $query .= " AND account_id IN (SELECT id FROM account WHERE usertype = 'operator')";
+                    
+                if ($groupby == "group") {
+                    $query .= " GROUP BY DATE(cretime), groupid";
+                } elseif($groupby == "account") {
+                    $query .= " GROUP BY DATE(cretime), username";
+                }
+                
+		if ($orderby != ""){
+			$query .= " ORDER BY $orderby";
+		}
+		
+		astercc::events($query);
+		$res = $db->query($query);
 		return $res;
 	}
 
@@ -441,6 +488,7 @@ Class astercrm extends PEAR{
 				."usertype='".$f['usertype']."', "
 				."groupid='".$f['groupid']."', "
 				."resellerid='".$f['resellerid']."', "
+                                ."email='".$f['email']."', "
 				."addtime= now() "
 				."WHERE id='".$f['id']."'";
 		astercrm::events($sql);

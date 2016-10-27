@@ -49,7 +49,8 @@ setcookie('PHPSESSID', session_id());
 
 require_once ('include/localization.class.php');
 
-if ($_SESSION['curuser']['usertype'] != 'admin' && $_SESSION['curuser']['usertype'] != 'reseller' && $_SESSION['curuser']['usertype'] != 'groupadmin' && $_SESSION['curuser']['usertype'] != 'clid') {
+if ($_SESSION['curuser']['usertype'] != 'admin' && $_SESSION['curuser']['usertype'] != 'reseller' && $_SESSION['curuser']['usertype'] != 'groupadmin' && $_SESSION['curuser']['usertype'] != 'clid'
+        && $_SESSION['curuser']['usertype'] != 'technicaladmin') {
 	header("Location: systemstatus.php");
 }
 

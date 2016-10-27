@@ -36,8 +36,9 @@ setcookie('PHPSESSID', session_id());
 
 require_once ('include/localization.class.php');
 
-if ($_SESSION['curuser']['usertype'] != 'admin' && $_SESSION['curuser']['usertype'] != 'reseller' && $_SESSION['curuser']['usertype'] != 'groupadmin' && $_SESSION['curuser']['usertype'] != 'operator') {
-	header("Location: systemstatus.php");
+if ($_SESSION['curuser']['usertype'] != 'admin' && $_SESSION['curuser']['usertype'] != 'reseller' && $_SESSION['curuser']['usertype'] != 'groupadmin' 
+    && $_SESSION['curuser']['usertype'] != 'operator' && $_SESSION['curuser']['usertype'] != 'supervisor' && $_SESSION['curuser']['usertype'] != 'hrsupervisor') {
+        header("Location: systemstatus.php");
 }
 
 $GLOBALS['locate']=new Localization($_SESSION['curuser']['country'],$_SESSION['curuser']['language'],'checkout');

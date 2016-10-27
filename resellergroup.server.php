@@ -159,12 +159,16 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fields[] = 'resellername';
 	$fields[] = 'accountcode';
 	$fields[] = 'callback';
-	$fields[] = 'creditlimit';	
-	$fields[] = 'limittype';
-	$fields[] = 'curcredit';
-	$fields[] = 'credit_clid';
-	$fields[] = 'credit_group';
-	$fields[] = 'credit_reseller';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $fields[] = 'creditlimit';
+            $fields[] = 'limittype';
+            $fields[] = 'curcredit';
+            $fields[] = 'credit_clid';
+            $fields[] = 'credit_group';
+            $fields[] = 'credit_reseller';
+        }
+        
 	$fields[] = 'addtime';
 
 	// HTML table: Headers showed
@@ -172,13 +176,17 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$headers[] = $locate->Translate("ID").'<br>';
 	$headers[] = $locate->Translate("Name").'<br>';
 	$headers[] = $locate->Translate("Callback").'<br>';
-	$headers[] = $locate->Translate("Credit Limit").'<br>';
-	$headers[] = $locate->Translate("Limit Type").'<br>';
-	$headers[] = $locate->Translate("Billsec Multiple").'<br>';
-	$headers[] = $locate->Translate("Cur credit").'<br>';
-	$headers[] = $locate->Translate("Clid Credit").'<br>';
-	$headers[] = $locate->Translate("Group Credit").'<br>';
-	$headers[] = $locate->Translate("Reseller Credit").'<br>';
+                
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $headers[] = $locate->Translate("Credit Limit").'<br>';
+            $headers[] = $locate->Translate("Limit Type").'<br>';
+            $headers[] = $locate->Translate("Billsec Multiple").'<br>';
+            $headers[] = $locate->Translate("Cur credit").'<br>';
+            $headers[] = $locate->Translate("Clid Credit").'<br>';
+            $headers[] = $locate->Translate("Group Credit").'<br>';
+            $headers[] = $locate->Translate("Reseller Credit").'<br>';
+        }
+        
 	$headers[] = $locate->Translate("Last Update").'<br>';
 
 	// HTML table: hearders attributes
@@ -186,13 +194,17 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$attribsHeader[] = 'width=""';
 	$attribsHeader[] = 'width=""';
 	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
+                
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+        }
+        
 	$attribsHeader[] = 'width=""';
 
 	// HTML Table: columns attributes
@@ -200,13 +212,17 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
+                
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+        }
+        
 	$attribsCols[] = 'style="text-align: left"';
 
 	// HTML Table: If you want ascendent and descendent ordering, set the Header Events.
@@ -214,13 +230,17 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","id","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","resellername","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","allowcallback","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","creditlimit","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","limittype","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","multiple","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","curcredit","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_clid","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_group","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_reseller","'.$divName.'","ORDERING");return false;\'';
+	        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","creditlimit","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","limittype","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","multiple","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","curcredit","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_clid","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_group","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_reseller","'.$divName.'","ORDERING");return false;\'';
+        }
+        
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","addtime","'.$divName.'","ORDERING");return false;\'';
 
 	// Select Box: fields table.
@@ -228,13 +248,17 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fieldsFromSearch[] = 'resellername';
 	$fieldsFromSearch[] = 'accountcode';
 	$fieldsFromSearch[] = 'callback';
-	$fieldsFromSearch[] = 'creditlimit';
-	$fieldsFromSearch[] = 'curcredit';
-	$fieldsFromSearch[] = 'limittype';
-	$fieldsFromSearch[] = 'multiple';
-	$fieldsFromSearch[] = 'credit_clid';
-	$fieldsFromSearch[] = 'credit_group';
-	$fieldsFromSearch[] = 'credit_reseller';
+                
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $fieldsFromSearch[] = 'creditlimit';
+            $fieldsFromSearch[] = 'curcredit';
+            $fieldsFromSearch[] = 'limittype';
+            $fieldsFromSearch[] = 'multiple';
+            $fieldsFromSearch[] = 'credit_clid';
+            $fieldsFromSearch[] = 'credit_group';
+            $fieldsFromSearch[] = 'credit_reseller';
+        }
+        
 	$fieldsFromSearch[] = 'addtime';
 
 	// Selecct Box: Labels showed on search select box.
@@ -242,13 +266,17 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fieldsFromSearchShowAs[] = $locate->Translate("Reseller Name");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Account Code");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Callback");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Credit Limit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Cur Credit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Limit Status");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Billsec Multiple");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Clid Credit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Group Credit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Reseller Credit");
+                
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $fieldsFromSearchShowAs[] = $locate->Translate("Credit Limit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Cur Credit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Limit Status");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Billsec Multiple");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Clid Credit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Group Credit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Reseller Credit");
+        }
+        
 	$fieldsFromSearchShowAs[] = $locate->Translate("Last Update");
 
 	// Create object whit 5 cols and all data arrays set before.
@@ -286,13 +314,17 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 		
 		$rowc[] = $row['resellername'];
 		$rowc[] = $row['allowcallback'];
-		$rowc[] = $row['creditlimit'];
-		$rowc[] = $row['limittype'];
-		$rowc[] = $row['multiple'];
-		$rowc[] = $row['curcredit'];
-		$rowc[] = $row['credit_clid'];
-		$rowc[] = $row['credit_group'];
-		$rowc[] = $row['credit_reseller'];
+                        
+                if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+                    $rowc[] = $row['creditlimit'];
+                    $rowc[] = $row['limittype'];
+                    $rowc[] = $row['multiple'];
+                    $rowc[] = $row['curcredit'];
+                    $rowc[] = $row['credit_clid'];
+                    $rowc[] = $row['credit_group'];
+                    $rowc[] = $row['credit_reseller'];
+                }
+                
 		$rowc[] = $row['addtime'];
 
 		if(!empty($row['limittype']) && (($row['creditlimit'] - $row['curcredit']) < 0 || $row['curcredit'] < 0)){
@@ -345,7 +377,7 @@ function reload(){
 function reloadSip(){
 	global $locate;
 	$objResponse = new xajaxResponse();
-	if ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'admin'){
+	if ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 		$myAsterisk = new Asterisk();
 		$myAsterisk->execute("sip reload");
 		$objResponse->addAlert($locate->Translate("sip conf reloaded"));

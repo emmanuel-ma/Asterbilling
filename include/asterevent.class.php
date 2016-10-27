@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * astercc.class.php
 * asterisk events class, read datas from table: curcdr
@@ -112,7 +112,7 @@ class astercc extends PEAR
 					$status[$list['src']]['direction'] = 'outbound';
 				}else{
 					// 使用srcchan作为src
-					if (ereg("\/(.*)-", $list['srcchan'], $myAry) ){
+					if (preg_match("/\\/(.*)-/", $list['srcchan'], $myAry) ){
 						$status[$myAry[1]] = $list;
 						$status[$myAry[1]]['direction'] = 'outbound';
 					}
@@ -312,11 +312,17 @@ class astercc extends PEAR
 		astercc::events($sql);
 		$cdr = &$db->getRow($sql);
 		$credit = $cdr['credit'];
+                
+                // Add account who is paying
+                if ( $cdr['accountid'] <= 0 ){
+                    $cdr['accountid'] = $_SESSION['curuser']['userid'];
+                }
+                
 		// insert the record to historycdr
 		if($config['system']['useHistoryCdr'] == 1){
 			$sql = "INSERT INTO historycdr SET calldate = '".$cdr['calldate']."', src = '".$cdr['src']."', `dst` = '".$cdr['dst']."',`srcname` = '".$cdr['srcname']."', `channel` = '".$cdr['channel']."', `dstchannel` = '".$cdr['dstchannel']."',`didnumber` = '".$cdr['didnumber']."', `duration` = '".$cdr['duration']."', `billsec` = '".$cdr['billsec']."', `billsec_leg_a` = '".$cdr['billsec_leg_a']."', `disposition` = '".$cdr['disposition']."', `accountcode` = '".$cdr['accountcode']."', `userfield` = 'BILLED', `srcuid` = '".$cdr['srcuid']."', `dstuid` = '".$cdr['dstuid']."',`queue` = '".$cdr['queue']."', `calltype` = '".$cdr['calltype']."', `credit` = '".$cdr['credit']."', `callshopcredit` = '".$cdr['callshopcredit']."', `resellercredit` = '".$cdr['resellercredit']."', `groupid` = '".$cdr['groupid']."', `resellerid` = '".$cdr['resellerid']."', `userid` = '".$cdr['userid']."', `accountid` = '".$cdr['accountid']."', `destination` = '".$cdr['destination']."', `memo` = '".$cdr['memo']."',`dialstring` = '".$cdr['dialstring']."',children = '".$cdr['children']."',ischild = '".$cdr['ischild']."',processed = '".$cdr['processed']."',customerid = $costomerid,crm_customerid = '".$cdr['crm_customerid']."',contactid = '".$cdr['contactid']."', discount = $discount ,payment='".$payment."',note='".$cdr['note']."',setfreecall='".$cdr['setfreecall']."',astercrm_groupid='".$cdr['astercrm_groupid']."',hangupcause='".$cdr['hangupcause']."',hangupcausetxt='".$cdr['hangupcausetxt']."',dialstatus='".$cdr['dialstatus']."'";
 		}else {
-			$sql = "UPDATE mycdr SET userfield = 'BILLED' ,customerid = $costomerid, discount = $discount , payment='".$payment."' WHERE id = $id ";
+			$sql = "UPDATE mycdr SET userfield = 'BILLED' ,customerid = $costomerid, discount = $discount , payment='".$payment."', accountid = ".$cdr['accountid']." WHERE id = $id ";
 		}
 		astercc::events($sql);
 		$cdr = &$db->query($sql);
@@ -458,7 +464,7 @@ function readAll($resellerid, $groupid, $peer, $sdate = null , $edate = null){
 	$res = $db->query($query);
 	return $res;
 }
-	function readReport($resellerid, $groupid, $booth, $sdate, $edate, $groupby = '',$orderby='',$limit=''){
+	function readReport($resellerid, $groupid, $booth, $account, $sdate, $edate, $groupby = '',$orderby='',$limit='', $wherehour=''){
 		global $db,$config;
 		$table = 'mycdr';
 		if($config['system']['useHistoryCdr'] == 1){
@@ -495,7 +501,16 @@ function readAll($resellerid, $groupid, $peer, $sdate = null , $edate = null){
 			}else{
 				$query .= " AND (src = '$booth' OR dst = '$booth')";
 			}
-		}		
+		}
+                
+                if ($account != 0 && $account != '')
+			$query .= " AND accountid = $account ";
+		else
+                        $query .= " AND accountid != -1 ";
+                
+                if ($wherehour >= 0 && $wherehour <= 23 && $wherehour != '')
+			$query .= " AND HOUR(calldate) = $wherehour ";
+                
 		#exit;
 		if ($groupby != ""){
 			$query .= " GROUP BY $groupby";
@@ -512,7 +527,7 @@ function readAll($resellerid, $groupid, $peer, $sdate = null , $edate = null){
 		return $res;
 	}
 
-	function readAnsweredNum($resellerid, $groupid, $booth, $sdate, $edate){
+	function readAnsweredNum($resellerid, $groupid, $booth, $account, $sdate, $edate, $wherehour = ''){
 		global $db,$config;
 		$table = 'mycdr';
 		if($config['system']['useHistoryCdr'] == 1){
@@ -545,7 +560,16 @@ function readAll($resellerid, $groupid, $peer, $sdate = null , $edate = null){
 			}else{
 				$query .= " AND src = '$booth' OR dst = '$booth'";
 			}
-		}		
+		}
+                
+                if ($account != 0 && $account != '')
+			$query .= " AND accountid = $account ";
+		else
+			$query .= " AND accountid != -1 ";
+                
+                if ($wherehour >= 0 && $wherehour <= 23 && $wherehour != '')
+			$query .= " AND HOUR(calldate) = $wherehour ";
+                
 		#exit;
 		//print $query;exit;
 		astercc::events($query);
@@ -592,10 +616,10 @@ function readAll($resellerid, $groupid, $peer, $sdate = null , $edate = null){
 	function readRateDesc($memo,$type=''){
 		global $locate;
 		if (!is_array($memo)){
-			$memo = split("\n",$memo,4);
+			$memo = preg_split("/\n/",$memo,4);
 			if ( $memo[0] != ''){
 				foreach ($memo as $val){
-					$tmp = split(":",$val);
+					$tmp = preg_split("/:/",$val);
 					$rate[$tmp[0]] = $tmp[1];
 				}
 			}else{
@@ -696,23 +720,29 @@ function readAll($resellerid, $groupid, $peer, $sdate = null , $edate = null){
 		return $price;
 	}
 	
-	function readReportPie($resellerid, $groupid, $booth, $sdate, $edate, $groupby = '',$orderby=''){
+	function readReportPie($resellerid, $groupid, $booth, $account, $sdate, $edate, $groupby = '',$orderby=''){
 		global $db,$config;
 		$table = 'mycdr';
 		if($config['system']['useHistoryCdr'] == 1){
 			$table = 'historycdr';
 		}
-       if ($resellerid == 0 || $resellerid == ''){
-			$query = "SELECT count(*) as recordNum, sum(billsec) as seconds, sum(credit) as credit, sum(callshopcredit) as callshopcredit, sum(resellercredit) as resellercredit, resellerid as gid  FROM $table WHERE calldate >= '$sdate' AND  calldate <= '$edate' ";
+                
+                if ($resellerid == 0 || $resellerid == ''){
+			$query = "SELECT count(*) as recordNum, sum(billsec) as seconds, sum(credit) as credit, sum(callshopcredit) as callshopcredit, sum(resellercredit) as resellercredit, resellerid as gid";
+                        if ( $groupby == 'account') $query .= ", accountid AS ggid";
 		}
-		else{
-			if ($groupid == 0 || $groupid == ''){
-				$query = "SELECT count(*) as recordNum, sum(billsec) as seconds, sum(credit) as credit, sum(callshopcredit) as callshopcredit, sum(resellercredit) as resellercredit, groupid as gid FROM $table WHERE calldate >= '$sdate' AND  calldate <= '$edate' ";
-				}else{
-				$query = "SELECT count(*) as recordNum, sum(billsec) as seconds, sum(credit) as credit, sum(callshopcredit) as callshopcredit, sum(resellercredit) as resellercredit, src as gid FROM $table WHERE calldate >= '$sdate' AND  calldate <= '$edate' ";	
-				}
+		elseif ($groupid == 0 || $groupid == ''){
+			$query = "SELECT count(*) as recordNum, sum(billsec) as seconds, sum(credit) as credit, sum(callshopcredit) as callshopcredit, sum(resellercredit) as resellercredit, groupid as gid";
+                        if ( $groupby == 'account') $query .= ", accountid AS ggid";
 		}
-				
+                elseif ( $groupby == 'account') {
+                        $query = "SELECT count(*) as recordNum, sum(billsec) as seconds, sum(credit) as credit, sum(callshopcredit) as callshopcredit, sum(resellercredit) as resellercredit, '' AS gid, accountid AS ggid";
+                }else{
+			$query = "SELECT count(*) as recordNum, sum(billsec) as seconds, sum(credit) as credit, sum(callshopcredit) as callshopcredit, sum(resellercredit) as resellercredit, src as gid";
+		}
+                
+                $query .= " FROM $table WHERE calldate >= '$sdate' AND  calldate <= '$edate' ";
+                
 		if ( ($groupid == '' || $groupid == 0) && ($_SESSION['curuser']['usertype'] == 'groupadmin' || $_SESSION['curuser']['usertype'] == 'operator')){
 			$groupid = $_SESSION['curuser']['groupid'];
 		}
@@ -739,17 +769,26 @@ function readAll($resellerid, $groupid, $peer, $sdate = null , $edate = null){
 			}
 		}		
 	
+                if ($account != 0 && $account != '')
+			$query .= " AND accountid = $account ";
+		else
+			$query .= " AND accountid != -1 ";
+                
 		if ($resellerid == 0 || $resellerid == ''){
 			$query .= " group by resellerid ";
+                        if ($groupby == "account") { $query .= ", accountid"; }
 		}
 		else{
 			if ($groupid == 0 || $groupid == ''){
-			$query .= " group by groupid ";
-			}else{
-			$query .= " group by src ";	
+                            $query .= " group by groupid ";
+                            if ($groupby == "account") { $query .= ", accountid"; }
+			}elseif ($groupby == "account") { 
+                            $query .= " group by accountid"; 
+                        } else {
+                            $query .= " group by src ";
 			}
 		}
-		
+
 		if ($orderby != ""){
 			$query .= " ORDER BY $orderby desc";
 		}

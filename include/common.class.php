@@ -53,8 +53,7 @@ class Common{
 					<table class="copyright" id="tblCopyright">
 					<tr>
 						<td>
-							©2007-2012 astercc - <a href="http://www.astercc.org" target="_blank">asterbilling home</a><br>
-							version: 0.18 in asterCC 0.22
+                                                        ©2014 SuMaTeL S.A. de C.V.
 						</td>
 					</tr>
 					</table>
@@ -66,21 +65,16 @@ class Common{
 	function generateManageNav($skin){
 		global $locate_common,$config;
 /*
-
-
-
-	
 		$html .= "<a href='contact.php' >".$locate_common->Translate("contact_manager")."</a> | ";
 		
 		$html .= "<a href='note.php' >".$locate_common->Translate("note_manager")."</a> | ";
 		
 		$html .= "<a href='diallist.php' >".$locate_common->Translate("diallist_manager")."</a> | ";
-
 */
 		$html .= '<div id="pagewidth">';
 		$html .= '<div class="">';
 		$html .= $locate_common->Translate("Username").':'.$_SESSION['curuser']['username'];
-		$html .= '&nbsp;&nbsp;'.$locate_common->Translate("User Type").':'.$_SESSION['curuser']['usertype'];
+		$html .= '&nbsp;&nbsp;'.$locate_common->Translate("User Type").':'.$locate_common->Translate($_SESSION['curuser']['usertype']);
 		$html .= '</div>';
 
 		$html .= '<div id="header"><ul>';
@@ -110,6 +104,7 @@ class Common{
 		$aryMenu['systemstatus'] = array("link"=>"systemstatus.php","title"=> $locate_common->Translate("systemstatus"));
 		$aryMenu['curcdr'] = array("link"=>"curcdr.php","title"=> $locate_common->Translate("curcdr"));
 		$aryMenu['delete_rate'] = array("link"=>"delete_rate.php","title"=> $locate_common->Translate("delete_rate"));
+                $aryMenu['managerprofile'] = array("link"=>"manager_profile.php","title"=> $locate_common->Translate("profile"));
 
 		if ($_SESSION['curuser']['usertype'] == 'admin'){
 			if($config['customers']['enable']){
@@ -124,6 +119,9 @@ class Common{
 			}else{
 				$aryCurMenu = array('account','accountgroup','report','customerrate','callshoprate','resellerrate','clid','import','cdr','credithistory','profile','curcdr');
 			}
+			$html .= common::generateNavMenu($aryMenu,$aryCurMenu);
+                }elseif($_SESSION['curuser']['usertype'] == 'technicaladmin'){
+			$aryCurMenu = array('account','accountgroup','resellergroup','clid','cdr','curcdr','system');
 			$html .= common::generateNavMenu($aryMenu,$aryCurMenu);
 		}elseif($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			if($config['customers']['enable']){
@@ -143,18 +141,28 @@ class Common{
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$aryCurMenu = array('clid','cdr','credithistory','curcdr');
 			$html .= common::generateNavMenu($aryMenu,$aryCurMenu);
+                }elseif($_SESSION['curuser']['usertype'] == 'supervisor'){
+                        if($config['customers']['enable']){
+                            $aryCurMenu = array('managerprofile','report','customerrate','customers','discount','cdr','curcdr');
+                        }else{
+                            $aryCurMenu = array('managerprofile','report','customerrate','cdr','curcdr');
+                        }
+			$html .= common::generateNavMenu($aryMenu,$aryCurMenu);
+                }elseif($_SESSION['curuser']['usertype'] == 'hrsupervisor'){
+                        $aryCurMenu = array('managerprofile','report','cdr');
+			$html .= common::generateNavMenu($aryMenu,$aryCurMenu);
 		}else{ // operator
 			if($config['customers']['enable']){
 				if($config['system']['sysstatus_new_window'] == 'yes'){
-					$aryCurMenu = array('report','customerrate','customers','discount','curcdr');
+                                    $aryCurMenu = array('managerprofile','report','customerrate','customers','discount','cdr','curcdr');
 				}else{
-					$aryCurMenu = array('report','customerrate','customers','discount','systemstatus','curcdr');
+                                    $aryCurMenu = array('managerprofile','report','customerrate','customers','discount','systemstatus','cdr','curcdr');
 				}
 			}else{
 				if($config['system']['sysstatus_new_window'] == 'yes'){
-					$aryCurMenu = array('report','customerrate','curcdr');
+                                    $aryCurMenu = array('managerprofile','report','customerrate','cdr','curcdr');
 				}else{
-					$aryCurMenu = array('report','customerrate','systemstatus','curcdr');
+                                    $aryCurMenu = array('managerprofile','report','customerrate','systemstatus','cdr','curcdr');
 				}
 			}
 			$html .= common::generateNavMenu($aryMenu,$aryCurMenu);
@@ -163,7 +171,8 @@ class Common{
 		if($_SESSION['curuser']['usertype'] == 'clid'){
 			$html .= '<li><a href="login.php" onclick="if (confirm(\''.$locate_common->Translate("are u sure to exit").'?\')){}else{return false;}">'.$locate_common->Translate("Logout").'</li>';
 		}else{
-			if ($_SESSION['curuser']['usertype'] == 'admin' or $_SESSION['curuser']['usertype'] == 'reseller'){
+			if ($_SESSION['curuser']['usertype'] == 'admin' or $_SESSION['curuser']['usertype'] == 'reseller' or $_SESSION['curuser']['usertype'] == 'technicaladmin'
+                            or $_SESSION['curuser']['usertype'] == 'supervisor' or $_SESSION['curuser']['usertype'] == 'hrsupervisor'){
 				$html .= '<li><a href="manager_login.php" onclick="if (confirm(\''.$locate_common->Translate("are u sure to exit").'?\')){}else{return false;}">'.$locate_common->Translate("Logout").'</li>';
 			}
 		}

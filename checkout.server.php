@@ -31,10 +31,12 @@ require_once ('include/common.class.php');
 
 
 function init($curpeer){
-	global $locate,$config;
+	global $locate,$config,$db;
 	$objResponse = new xajaxResponse();
 	$peers = array();
-	if ($_SESSION['curuser']['usertype'] == 'admin'){
+        
+	if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0)
+            || ($_SESSION['curuser']['usertype'] == 'hrsupervisor' && $_SESSION['curuser']['resellerid'] == 0)){
 		// set all reseller first
 		$reseller = astercrm::getAll('resellergroup');
 		$objResponse->addScript("addOption('resellerid','"."0"."','".$locate->Translate("All")."');");
@@ -46,13 +48,14 @@ function init($curpeer){
 			$objResponse->addScript("addOption('resellerid','".$row['id']."','".$row['resellername']."');");
 		}
 
-	}else if ($_SESSION['curuser']['usertype'] == 'reseller'){
+	}else if ($_SESSION['curuser']['usertype'] == 'reseller' || ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['groupid'] == 0)
+            || ($_SESSION['curuser']['usertype'] == 'hrsupervisor' && $_SESSION['curuser']['groupid'] == 0)){
 		// set one reseller
 		$objResponse->addScript("addOption('resellerid','".$_SESSION['curuser']['resellerid']."','".""."');");
 
 		// set all group
 		$group = astercrm::getAll('accountgroup','resellerid',$_SESSION['curuser']['resellerid']);
-		$objResponse->addScript("addOption('groupid','"."0"."','"."All"."');");
+		$objResponse->addScript("addOption('groupid','"."0"."','".$locate->Translate("All")."');");
 		while	($group->fetchInto($row)){
 			if($config['synchronize']['display_synchron_server']){
 				$row['groupname'] = astercrm::getSynchronDisplay($row['id'],$row['groupname']);
@@ -94,6 +97,32 @@ function init($curpeer){
 				$objResponse->addScript("addOption('sltBooth','".$row['clid']."','".$clidDisplay."');");
 		}
 		$objResponse->addScript("addOption('sltBooth','-1','".$locate->Translate("Callback")."');");
+                
+                // Accounts
+                //$account = astercrm::getAll('account','groupid',$_SESSION['curuser']['groupid']);
+                if ( $_SESSION['curuser']['usertype'] != 'operator' ) {
+                    $query = "SELECT account_id, username FROM account_log WHERE groupid = ".$_SESSION['curuser']['groupid']." GROUP BY account_id";
+                
+                    $account = $db->query($query);
+                    $objResponse->addScript("addOption('sltAccount','"."0"."','".$locate->Translate("All")."');");
+
+                    while	($account->fetchInto($row)){
+                	if($config['synchronize']['display_synchron_server']){
+                            $accountDisplay = astercrm::getSynchronDisplay($row['account_id'],$row['username']);
+                        } else {
+                            $accountDisplay = $row['username'];
+                        }
+			
+                	if ($_SESSION['curuser']['userid'] == $row['account_id'])
+                            $objResponse->addScript("addOption('sltAccount','".$row['account_id']."','".$accountDisplay."',true);");
+                        else
+                            $objResponse->addScript("addOption('sltAccount','".$row['account_id']."','".$accountDisplay."');");
+                    }
+                } else {
+                    $accountDisplay = astercrm::getSynchronDisplay($_SESSION['curuser']['userid'],$_SESSION['curuser']['username']);
+                    $objResponse->addScript("addOption('sltAccount','".$_SESSION['curuser']['userid']."','".$accountDisplay."');");
+                }
+                
 		// get limit status and creditlimit
 		$accountgroup = astercc::readRecord("accountgroup","id",$_SESSION['curuser']['groupid']);
 		if ($accountgroup){
@@ -114,6 +143,7 @@ function init($curpeer){
 
 	$objResponse->addAssign("divNav","innerHTML",common::generateManageNav($skin));
 	$objResponse->addAssign("divCopyright","innerHTML",common::generateCopyright($skin));
+        $objResponse->addScript("listTypeChange();");
 
 	return $objResponse;
 }
@@ -131,6 +161,21 @@ function setGroup($resellerid){
 
 		$objResponse->addScript("addOption('groupid','".$row['id']."','".$row['groupname']."');");
 	}
+        
+        // account option
+        //$res = astercrm::getAll("account",'resellerid',$resellerid);
+	//添加option
+	/*$objResponse->addScript("addOption('sltAccount','"."0"."','".$locate->Translate("All")."');");
+	while ($res->fetchInto($row)) {
+		if($config['synchronize']['display_synchron_server']){
+			$accountDisplay = astercrm::getSynchronDisplay($row['id'],$row['username']);
+		} else {
+			$accountDisplay = $row['username'];
+		}
+		
+		$objResponse->addScript("addOption('sltAccount','".$row['id']."','".$accountDisplay."');");
+	}*/
+        
 	return $objResponse;
 }
 
@@ -152,22 +197,26 @@ function parseReport($myreport,$answeredNum = '',$a2bcost=-1){
 	}
 
 	if($sec > 0) $mins+=1;
-	$asr = round($answeredNum/$myreport['recordNum'] * 100,2);
-	$acd = round($myreport['seconds']/$answeredNum/60,1);
+        
+        if ($answeredNum != '') {
+            $asr = round($answeredNum/$myreport['recordNum'] * 100,2);
+            $acd = round($myreport['seconds']/$answeredNum/60,1);
+        }
 
 	if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
 		$html .= $locate->Translate("Calls").": ".$myreport['recordNum']."<br>";
-		$html .= $locate->Translate("Answered").": ".$answeredNum."<br>";
+		if ($answeredNum != '')
+                    $html .= $locate->Translate("Answered").": ".$answeredNum."<br>";
 		//$html .= $locate->Translate("Billsec").": ".$myreport['seconds']."(".$hour.":".$minute.":".$sec.")<br>";
 		$html .= $locate->Translate("Billsec").": ".astercrm::FormatSec($myreport['seconds'])."(".$mins."min)<br>";
-
-		$html .= $locate->Translate("Billsec_Leg_A").": ".astercrm::FormatSec($myreport['billsec_leg_a'])."(".$amins."min)<br>";
+                if (isset($myreport['billsec_leg_a']))
+                    $html .= $locate->Translate("Billsec_Leg_A").": ".astercrm::FormatSec($myreport['billsec_leg_a'])."(".$amins."min)<br>";
 
 		if($answeredNum != ''){
 			$html .= $locate->Translate("ASR").": ".$asr."%<br>";
 			$html .= $locate->Translate("ACD").": ".$acd." Min<br>";
 		}
-		$html .= $locate->Translate("Amount").": ".$myreport['credit']."<br>";
+		$html .= $locate->Translate("Amount").": $".$myreport['credit']."<br>";
 		if($a2bcost >= 0){
 			$html .= $locate->Translate("A2B Cost").": ".$a2bcost."<br>";
 		}else{
@@ -194,7 +243,7 @@ function parseReport($myreport,$answeredNum = '',$a2bcost=-1){
 			$html .= $locate->Translate("ASR").": ".$asr."%<br>";
 			$html .= $locate->Translate("ACD").": ".$acd." Min<br>";
 		}
-		$html .= $locate->Translate("Amount").": ".$myreport['credit']."<br>";
+		$html .= $locate->Translate("Amount").": $".$myreport['credit']."<br>";
 		if($a2bcost >= 0){
 			$html .= $locate->Translate("A2B Cost").": ".$a2bcost."<br>";
 			$html .= $locate->Translate("Profit").": ". ($myreport['credit'] - $a2bcost) ."<br>";
@@ -205,7 +254,8 @@ function parseReport($myreport,$answeredNum = '',$a2bcost=-1){
 			$ary['markup'] = $myreport['credit'] - $myreport['callshopcredit'];
 		}		
 		
-	}else if ($_SESSION['curuser']['usertype'] == 'operator'){
+	}else if ($_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor'
+            || $_SESSION['curuser']['usertype'] == 'hrsupervisor'){
 		$html .= $locate->Translate("Calls").": ".$myreport['recordNum']."<br>";
 		//$html .= $locate->Translate("Billsec").": ".$myreport['seconds']."(".$hour.":".$minute.":".$sec.")<br>";
 		$html .= $locate->Translate("Billsec").": ".astercrm::FormatSec($myreport['seconds'])."(".$mins."min)<br>";
@@ -216,7 +266,7 @@ function parseReport($myreport,$answeredNum = '',$a2bcost=-1){
 			//$html .= $locate->Translate("A2B Cost").": ".$a2bcost."<br>";
 		}
 
-		$html .=  $locate->Translate("Callshop").": ".$myreport['credit']."<br>";
+		$html .=  $locate->Translate("Amount").": $".$myreport['credit']."<br>";
 		if($answeredNum != ''){
 			$html .= $locate->Translate("ASR").": ".$asr."%<br>";
 			$html .= $locate->Translate("ACD").": ".$acd." Min<br>";
@@ -244,6 +294,21 @@ function setClid($groupid){
 		$objResponse->addScript("addOption('sltBooth','".$row['clid']."','".$clidDisplay."');");
 	}
 	$objResponse->addScript("addOption('sltBooth','-1','".$locate->Translate("Callback")."');");
+        
+        // account option
+        $res = astercrm::getAll("account",'groupid',$groupid);
+	//添加option
+	$objResponse->addScript("addOption('sltAccount','"."0"."','".$locate->Translate("All")."');");
+	while ($res->fetchInto($row)) {
+		if($config['synchronize']['display_synchron_server']){
+			$accountDisplay = astercrm::getSynchronDisplay($row['id'],$row['username']);
+		} else {
+			$accountDisplay = $row['username'];
+		}
+		
+		$objResponse->addScript("addOption('sltAccount','".$row['id']."','".$accountDisplay."');");
+	}
+        
 	return $objResponse;
 }
 
@@ -258,9 +323,9 @@ function listCDR($aFormValues){
 		}
 		
 	
-    $group = astercrm::getAll('accountgroup');
-    while	($group->fetchInto($row)){
-    	$id=$row['id'];
+        $group = astercrm::getAll('accountgroup');
+        while ($group->fetchInto($row)){
+                $id=$row['id'];
 		$group_arr[$id]=$row['groupname'];
 		}
 	$objResponse = new xajaxResponse();
@@ -270,22 +335,26 @@ function listCDR($aFormValues){
 	if ($aFormValues['sltBooth'] == '' && $aFormValues['hidCurpeer'] != ''){
 		$aFormValues['sltBooth'] = $aFormValues['hidCurpeer'];
 	}
+        
+        if ($aFormValues['sltAccount'] == '' && $_SESSION['curuser']['usertype'] == 'operator'){
+            $aFormValues['sltAccount'] = $_SESSION['curuser']['userid'];
+        }
 
-	list ($syear,$smonth,$sday,$stime) = split("[ -]",$aFormValues['sdate']);
+	list ($syear,$smonth,$sday,$stime) = preg_split("/[ -]/",$aFormValues['sdate']);
 	$syear = (int)$syear;
 	$smonth = (int)$smonth;
 	$sday = (int)$sday;
-	list($shours,$smins) = split("[ :]",$stime);
+	list($shours,$smins) = preg_split("/[ :]/",$stime);
 	$shours = (int)$shours;
 	if($shours == 0) $shours = '00';
 	$smins = (int)$smins;
 	if($smins == 0) $smins = '00';
 
-	list ($eyear,$emonth,$eday,$etime) = split("[ -]",$aFormValues['edate']);
+	list ($eyear,$emonth,$eday,$etime) = preg_split("/[ -]/",$aFormValues['edate']);
 	$eyear = (int)$eyear;
 	$emonth = (int)$emonth;
 	$eday = (int)$eday;
-	list($ehours,$emins) = split("[ :]",$etime);
+	list($ehours,$emins) = preg_split("/[ :]/",$etime);
 	$ehours = (int)$ehours;
 	if($ehours == 0) $ehours = '00';
 	$emins = (int)$emins;
@@ -297,17 +366,18 @@ function listCDR($aFormValues){
 		$aFormValues['sdate']=$syear."-".$smonth."-".$sday.' '.$shours.':'.$smins;
 		$aFormValues['edate']=$eyear."-".$emonth."-".$eday.' '.$ehours.':'.$emins;
 	}else{
-		$aFormValues['sdate']=$syear."-".$smonth."-".$sday;
-		$aFormValues['edate']=$eyear."-".$emonth."-".$eday;
+		$aFormValues['sdate']=$syear."-".$smonth."-".$sday; //.' '.$shours.':'.$smins;
+		$aFormValues['edate']=$eyear."-".$emonth."-".$eday; //.' '.$ehours.':'.$emins;
 	}
 
 	if ($aFormValues['listType'] == "none"){
-		$res = astercc::readReport($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'], $aFormValues['sdate'],$aFormValues['edate']);
+		$res = astercc::readReport($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'], $aFormValues['sltAccount'], $aFormValues['sdate'],$aFormValues['edate']);
 
-		$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'], $aFormValues['sdate'],$aFormValues['edate']);
+		$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'],$aFormValues['sltAccount'], $aFormValues['sdate'],$aFormValues['edate']);
 
 		$a2bcost = -1;
 		if($config['a2billing']['enable']){
+                        // Falta tomar en cuenta sltAccount para A2Billing
 			$a2bcost = Customer::readA2Breport($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'], $aFormValues['sdate'],$aFormValues['edate']);
 		}
 
@@ -320,13 +390,13 @@ function listCDR($aFormValues){
 		return $objResponse;
 	}elseif ($aFormValues['listType'] == "sumyear"){
 		if ($aFormValues['reporttype'] == "flash"){
-			$objResponse->addScript("actionFlash('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+			$objResponse->addScript("actionFlash('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
 			$html = "";
 		}else{
 			for ($year = $syear; $year<=$eyear;$year++){
 			
-				$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], "$year-1-1 00:00:00","$year-12-31 23:59:59");
-				$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'], "$year-1-1 00:00:00","$year-12-31 23:59:59");
+				$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$year-1-1 00:00:00","$year-12-31 23:59:59");
+				$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'],$aFormValues['sltAccount'], "$year-1-1 00:00:00","$year-12-31 23:59:59");
 
 				$a2bcost = -1;
 				if($config['a2billing']['enable']){
@@ -371,13 +441,13 @@ function listCDR($aFormValues){
 
 	}elseif ($aFormValues['listType'] == "summonth"){
 		if ($aFormValues['reporttype'] == "flash"){
-			$objResponse->addScript("actionFlash('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+			$objResponse->addScript("actionFlash('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
 		}else{
 			//for ($year = $syear; $year<=$eyear;$year++){
 				$year = $syear;
 				for ($month = 1;$month<=12;$month++){
-					$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], "$year-$month-1 00:00:00","$year-$month-31 23:59:59");
-					$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'], "$year-$month-1 00:00:00","$year-$month-31 23:59:59");
+					$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$year-$month-1 00:00:00","$year-$month-31 23:59:59");
+					$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'],$aFormValues['sltAccount'], "$year-$month-1 00:00:00","$year-$month-31 23:59:59");
 
 					$a2bcost = -1;
 					if($config['a2billing']['enable']){
@@ -420,11 +490,11 @@ function listCDR($aFormValues){
 		return $objResponse;
 	}elseif ($aFormValues['listType'] == "sumday"){
 		if ($aFormValues['reporttype'] == "flash"){
-			$objResponse->addScript("actionFlash('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+			$objResponse->addScript("actionFlash('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
 		}else{
 			for ($day = $sday;$day<=31;$day++){
-				$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], "$syear-$smonth-$day 00:00:00","$syear-$smonth-$day 23:59:59");
-				$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'], "$syear-$smonth-$day 00:00:00","$syear-$smonth-$day 23:59:59");
+				$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$syear-$smonth-$day 00:00:00","$syear-$smonth-$day 23:59:59");
+				$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'],$aFormValues['sltAccount'], "$syear-$smonth-$day 00:00:00","$syear-$smonth-$day 23:59:59");
 
 				$a2bcost = -1;
 				if($config['a2billing']['enable']){
@@ -468,11 +538,14 @@ function listCDR($aFormValues){
 		return $objResponse;
 	}elseif ($aFormValues['listType'] == "sumhour"){
 		if ($aFormValues['reporttype'] == "flash"){
-			$objResponse->addScript("actionFlash('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+			$objResponse->addScript("actionFlash('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
 		}else{
 			for ($hour = 0;$hour<=23;$hour++){
-				$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], "$syear-$smonth-$sday $hour:00:00","$syear-$smonth-$sday $hour:59:59");
-				$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'], "$syear-$smonth-$sday $hour:00:00","$syear-$smonth-$sday $hour:59:59");
+				$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$syear-$smonth-$sday $hour:00:00","$syear-$smonth-$sday $hour:59:59");
+				$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'],$aFormValues['sltAccount'], "$syear-$smonth-$sday $hour:00:00","$syear-$smonth-$sday $hour:59:59");
+                                // Por si se requiere obtener dicha informacion en el intervalo especificado
+                                //$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$syear-$smonth-$sday $hour:00:00","$eyear-$emonth-$eday $hour:59:59",'','','',"$hour");
+				//$answeredNum = astercc::readAnsweredNum($aFormValues['resellerid'],$aFormValues['groupid'],$aFormValues['sltBooth'],$aFormValues['sltAccount'], "$syear-$smonth-$sday $hour:00:00","$eyear-$emonth-$eday $hour:59:59","$hour");
 
 				$a2bcost = -1;
 				if($config['a2billing']['enable']){
@@ -482,6 +555,7 @@ function listCDR($aFormValues){
 				if ($res->fetchInto($myreport)){
 					$html .= "<div class='box'>";
 					$html .= "$syear-$smonth-$sday $hour:<br/>";
+                                        //$html .= "$syear-$smonth-$sday .. $eyear-$emonth-$eday, $hour:<br/>";
 					$html .= "<div>";
 					$result = parseReport($myreport,$answeredNum,$a2bcost); 
 					$html .= $result['html'];
@@ -516,7 +590,7 @@ function listCDR($aFormValues){
 		return $objResponse;
 	}elseif ($aFormValues['listType'] == "sumdest"){
 		
-		$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sdate'],$aFormValues['edate'],'destination');
+		$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], $aFormValues['sdate'],$aFormValues['edate'],'destination');
 		$html .= '<form action="" name="f" id="f">';
 		$html .= '<table width="99%">';
 		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
@@ -542,7 +616,8 @@ function listCDR($aFormValues){
 					<td width="90">'.$locate->Translate("Markup").'</td>
 					</tr>';
 			
-		}else if ($_SESSION['curuser']['usertype'] == 'operator'){
+		}else if ($_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor'
+                        || $_SESSION['curuser']['usertype'] == 'hrsupervisor'){
 					$html .= '<tr>
 					<td width="60"></td>
 					<td width="160">'.$locate->Translate("Destination").'</td>
@@ -574,7 +649,8 @@ function listCDR($aFormValues){
 						<td width="120">'.$row['callshopcredit'].'</td>
 						<td width="120">'.($row['credit'] - $row['callshopcredit']).'</td>
 						</tr>';	
-			}else if ($_SESSION['curuser']['usertype'] == 'operator'){
+			}else if ($_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor'
+                                || $_SESSION['curuser']['usertype'] == 'hrsupervisor'){
 					$html .= '<tr>
 						<td width="60"></td>
 						<td width="160">'.$row['destination'].'</td>
@@ -589,7 +665,7 @@ function listCDR($aFormValues){
 	
 		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
 			if ($aFormValues['reporttype'] == "flash"){
-				$objResponse->addScript("actionPie1('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+				$objResponse->addScript("actionPie1('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
 		            $html='';		
 			}else{
 				
@@ -598,28 +674,29 @@ function listCDR($aFormValues){
 		}
 		else if ($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			if ($aFormValues['reporttype'] == "flash"){
-				$objResponse->addScript("actionPie2('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+				$objResponse->addScript("actionPie2('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
 			 $html='';	
 			}else{
 				$objResponse->addAssign("divUnbilledList","innerHTML",$html);
 			}
 		}
-		else if ($_SESSION['curuser']['usertype'] == 'operator'){
-		if ($aFormValues['reporttype'] == "flash"){
-			$objResponse->addScript("actionPie3('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
-		 $html='';	
-		}else{
+		else if ($_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor'
+                        || $_SESSION['curuser']['usertype'] == 'hrsupervisor'){
+                    if ($aFormValues['reporttype'] == "flash"){
+			$objResponse->addScript("actionPie3('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+                        $html='';	
+                    }else{
 			$objResponse->addAssign("divUnbilledList","innerHTML",$html);
-		}
+                    }
 			
 		}
 		
 		return $objResponse;
 	}elseif ($aFormValues['listType'] == "sumgroup"){
 		if ($aFormValues['reporttype'] == "flash"){
-			$objResponse->addScript("actionPieGroup('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+			$objResponse->addScript("actionPieGroup('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
 		}else{
-			$res = astercc::readReportPie($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sdate'],$aFormValues['edate'],'destination',$aFormValues['action'],'limit');
+			$res = astercc::readReportPie($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], $aFormValues['sdate'],$aFormValues['edate'],'destination',$aFormValues['action'],'limit');
 
 			while($res->fetchInto($row)){
 				$iid=$row['gid'];
@@ -661,8 +738,223 @@ function listCDR($aFormValues){
 			
 		}
 		return $objResponse;
-	}
-		
+        }elseif ($aFormValues['listType'] == "sumaccount"){
+		if ($aFormValues['reporttype'] == "flash"){
+			$objResponse->addScript("actionPieGroup('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+		}else{
+                        $account = astercrm::getAll('account');
+                        while ($account->fetchInto($row)){
+                            $id=$row['id'];
+                            $account_arr[$id]=$row['username'];
+                        }
+                
+			$res = astercc::readReportPie($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], $aFormValues['sdate'],$aFormValues['edate'],'account',$aFormValues['action'],'limit');
+
+			while($res->fetchInto($row)){
+				$iid = $row['gid'];
+				if ($aFormValues['resellerid'] == 0 || $aFormValues['resellerid'] == ''){
+                                    $title ="".$reseller_arr[$iid];
+				}
+				else{
+                                    if ($aFormValues['groupid'] == 0 || $aFormValues['groupid'] == ''){
+					$title="".$group_arr[$iid];
+                                    }
+                                    else 
+					$title="".$iid;
+				}
+                                
+                                
+				$html .= "<div class='box'>";
+				$html .= "<b>$title:</b><br/>";
+                                        $html .= "".$locate->Translate('Account').": <b>".$account_arr[$row['ggid']]."</b><br/>";
+					$html .= "<div>";
+					$result = parseReport($row); 
+					$html .= $result['html'];
+					$html .= "</div>";
+					$html .= "</div>";
+					$ary['recordNum'] += $result['data']['recordNum'];
+					$ary['seconds'] += $result['data']['seconds'];
+					$ary['credit'] += $result['data']['credit'];
+					$ary['callshopcredit'] += $result['data']['callshopcredit'];
+					$ary['resellercredit'] += $result['data']['resellercredit'];
+			
+			}
+			$html .= "<div class='box'>";
+			$html .= "total :<br/>";
+			$html .= "<div>";
+			$result = parseReport($ary); 
+			$html .= $result['html'];
+			$html .= "</div>";
+			$html .= "</div>";
+
+			$html .= "<div style='clear:both;'></div>";
+			$objResponse->addAssign("divUnbilledList","innerHTML",$html);
+			
+			
+		}
+		return $objResponse;
+	}elseif ($aFormValues['listType'] == "accountlog-account"){
+		if ($aFormValues['reporttype'] == "flash"){
+			//$objResponse->addScript("actionPieGroup('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+		}else{
+			$res = astercrm::readReportAccountLog($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltAccount'], $aFormValues['sdate'],$aFormValues['edate'],'account',$aFormValues['action'],'limit');
+
+                        $html .= "<table class=\"adminlist\" border=\"1\" >"
+                                    . "     <tr>"
+                                    . "         <th>".$locate->Translate('Date')."</td>"
+                                    . "         <th>".$locate->Translate('Account')."</td>"
+                                    . "         <th>".$locate->Translate('Login')."</td>"
+                                    . "         <th>".$locate->Translate('Logout')."</td>"
+                                    . "     </tr>";
+                        
+                        $credatelast = "";
+                        $htmlcredate = "";
+                        $numgroup = 0;
+                        $trstyle = 'class="row1"'; //style="background-color:red;"';
+			while($res->fetchInto($row)){
+				/*$iid = $row['gid'];
+				if ($aFormValues['resellerid'] == 0 || $aFormValues['resellerid'] == ''){
+                                    $title ="".$reseller_arr[$iid];
+				}
+				else{
+                                    if ($aFormValues['groupid'] == 0 || $aFormValues['groupid'] == ''){
+					$title="".$group_arr[$iid];
+                                    }
+                                    else 
+					$title="".$iid;
+				}*/
+                            $credate = $row['credate'];
+                            
+                            if ( $credatelast != $credate) {
+                                if ( $numgroup > 0 ) {
+                                    $html .= "<tr $trstyle>"
+                                        . "     <td rowspan='$numgroup'>$credatelast</td>";
+                                    $html .= $htmlcredate;
+                                }
+                                
+                                $credatelast = $credate;
+                                $numgroup = 0;
+                                $htmlcredate = "";
+                                
+                                $trstyle = ($trstyle == 'class="row1"' ? 'class="row0"' :'class="row1"');
+                            } else {
+                                $trstyle = ($trstyle == 'class="row1"' ? 'class="row0"' :'class="row1"');
+                                
+                                $htmlcredate .= "<tr $trstyle>";
+                            }
+                            
+                            $numgroup++;
+                            
+                            $htmlcredate .= "    <td>".$row['gid']."</td>";
+                            
+                            $igroup_arr = preg_split('/\|/', $row['igroup']);
+                            $htmllogin = "";
+                            $htmllogout = "";
+                            foreach ($igroup_arr as $igroup) {
+                                list($cretime,$action,$groupid) = preg_split('/,/', $igroup);
+                                
+                                if ( $action == "login" )
+                                    $htmllogin .= "$cretime - ".$group_arr[$groupid]."<br/>";
+                                else
+                                    $htmllogout .= "$cretime - ".$group_arr[$groupid]."<br/>";
+                            }
+                            
+                            $htmlcredate .= "   <td>$htmllogin</td>"
+                                    . "         <td>$htmllogout</td>"
+                                    . "     </tr>";
+			}
+                        
+                        if ( $numgroup > 0 ) {
+                            if ( ($numgroup % 2) == 0 ) $trstyle = ($trstyle == 'class="row1"' ? 'class="row0"' :'class="row1"');
+                            
+                            $html .= "<tr $trstyle>"
+                                    . "     <td rowspan='$numgroup'>$credatelast</td>";
+                            $html .= $htmlcredate;
+                        }
+
+                        $html .= "</table>";
+			$html .= "<div style='clear:both;'></div>";
+			$objResponse->addAssign("divUnbilledList","innerHTML",$html);
+			
+			
+		}
+		return $objResponse;
+	}elseif ($aFormValues['listType'] == "accountlog-group"){
+		if ($aFormValues['reporttype'] == "flash"){
+			//$objResponse->addScript("actionPieGroup('".$aFormValues["resellerid"]."','".$aFormValues["groupid"]."','".$aFormValues["sltBooth"]."','".$aFormValues["sltAccount"]."','".$aFormValues["sdate"]."','".$aFormValues["edate"]."','".$aFormValues["listType"]."','".$aFormValues["hidCurpeer"]."');");
+		}else{
+			$res = astercrm::readReportAccountLog($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltAccount'], $aFormValues['sdate'],$aFormValues['edate'],'group',$aFormValues['action'],'limit');
+
+                        $html .= "<table class=\"adminlist\" border=\"1\" >"
+                                    . "     <tr>"
+                                    . "         <th>".$locate->Translate('Date')."</td>"
+                                    . "         <th>".$locate->Translate('Callshop')."</td>"
+                                    . "         <th>".$locate->Translate('Login')."</td>"
+                                    . "         <th>".$locate->Translate('Logout')."</td>"
+                                    . "     </tr>";
+                        
+                        $credatelast = "";
+                        $htmlcredate = "";
+                        $numgroup = 0;
+                        $trstyle = 'class="row1"'; //style="background-color:red;"';
+			while($res->fetchInto($row)){
+                            $credate = $row['credate'];
+                            
+                            if ( $credatelast != $credate) {
+                                if ( $numgroup > 0 ) {
+                                    $html .= "<tr $trstyle>"
+                                        . "     <td rowspan='$numgroup'>$credatelast</td>";
+                                    $html .= $htmlcredate;
+                                }
+                                
+                                $credatelast = $credate;
+                                $numgroup = 0;
+                                $htmlcredate = "";
+                                
+                                $trstyle = ($trstyle == 'class="row1"' ? 'class="row0"' :'class="row1"');
+                            } else {
+                                $trstyle = ($trstyle == 'class="row1"' ? 'class="row0"' :'class="row1"');
+                                
+                                $htmlcredate .= "<tr $trstyle>";
+                            }
+                            
+                            $numgroup++;
+                            
+                            $htmlcredate .= "    <td>".$group_arr[$row['gid']]."</td>";
+                            
+                            $igroup_arr = preg_split('/\|/', $row['igroup']);
+                            $htmllogin = "";
+                            $htmllogout = "";
+                            foreach ($igroup_arr as $igroup) {
+                                list($cretime,$action,$groupid) = preg_split('/,/', $igroup);
+                                
+                                if ( $action == "login" )
+                                    $htmllogin .= "$cretime - ".$groupid."<br/>";
+                                else
+                                    $htmllogout .= "$cretime - ".$groupid."<br/>";
+                            }
+                            
+                            $htmlcredate .= "   <td>$htmllogin</td>"
+                                    . "         <td>$htmllogout</td>"
+                                    . "     </tr>";
+			}
+                        
+                        if ( $numgroup > 0 ) {
+                            if ( ($numgroup % 2) == 0 ) $trstyle = ($trstyle == 'class="row1"' ? 'class="row0"' :'class="row1"');
+                            
+                            $html .= "<tr $trstyle>"
+                                    . "     <td rowspan='$numgroup'>$credatelast</td>";
+                            $html .= $htmlcredate;
+                        }
+
+                        $html .= "</table>";
+			$html .= "<div style='clear:both;'></div>";
+			$objResponse->addAssign("divUnbilledList","innerHTML",$html);
+			
+			
+		}
+		return $objResponse;
+	}	
 	
 	$records = astercc::readAll($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'],$aFormValues['sdate'],$aFormValues['edate']);
 
@@ -708,7 +1000,8 @@ function listCDR($aFormValues){
 		$callshop_cost = 0;
 		$reseller_cost = 0;
 
-		if ($_SESSION['curuser']['usertype'] == 'operator') {
+		if ($_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor'
+                        || $_SESSION['curuser']['usertype'] == 'hrsupervisor') {
 
 		} else if($_SESSION['curuser']['usertype'] == 'groupadmin'){
 
@@ -737,7 +1030,8 @@ function listCDR($aFormValues){
 						<td>'.astercrm::FormatSec($mycdr['billsec']).'</td>
 						<td>'.$mycdr['destination'].'</td>
 						<td>'.$ratedesc.'</td>';
-		if ($_SESSION['curuser']['usertype'] == 'operator') {
+		if ($_SESSION['curuser']['usertype'] == 'operator' || $_SESSION['curuser']['usertype'] == 'supervisor'
+                    || $_SESSION['curuser']['usertype'] == 'hrsupervisor') {
 			$html .=  '<td>'.$mycdr['credit'].'</td>';
 		}else if($_SESSION['curuser']['usertype'] == 'groupadmin') {
 			$html .=  '<td>'.$mycdr['credit'].'<br>'.'('.$callshop_cost.')'.'</td>';
@@ -812,7 +1106,7 @@ function checkOut($aFormValues){
 			$callshop += $aFormValues['callshop-'.$id];
 			$reseller += $aFormValues['reseller-'.$id];
 		}
-		$objResponse->addScript("listCDR();");
+            $objResponse->addScript("listCDR();");
 	    $objResponse->addAssign("spanCurrencyTotal","innerHTML",$locate->Translate("should").":".$amounta." ".$locate->Translate("real").":".$amountb);
 	    $objResponse->addAssign("spanCurrencyCallshopCost","innerHTML",$callshop);
 	    $objResponse->addAssign("spanCurrencyResellerCost","innerHTML",$reseller);
@@ -822,6 +1116,11 @@ function checkOut($aFormValues){
 
 function speedDate($date_type){
 	switch($date_type){
+                case "tye":
+                        $date = date("Y-m-d");
+			$start_date = date("Y-m-d",strtotime("$date -1 days"))." 00:00";
+			$end_date = date("Y-m-d",strtotime("$date -1 days"))." 23:59";
+			break;
 		case "td":
 			$start_date = date("Y-m-d")." 00:00";
 			$end_date = date("Y-m-d")." 23:59";

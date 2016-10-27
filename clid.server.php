@@ -63,10 +63,10 @@ function init(){
 function generateSipFile(){
 	global $locate,$db;
 	$objResponse = new xajaxResponse();
-	if ($_SESSION['curuser']['usertype'] == 'reseller'){
+	if ($_SESSION['curuser']['usertype'] == 'reseller' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] != 0)){
 		astercc::generatePeersFile($_SESSION['curuser']['resellerid']);
 		$objResponse->addAlert($locate->Translate("sip conf file generated"));
-	}elseif ($_SESSION['curuser']['usertype'] == 'admin'){
+	}elseif ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 		$res = astercrm::getAll("resellergroup");
 		while ($res->fetchInto($row)) {
 			astercc::generatePeersFile($row['id']);
@@ -79,7 +79,7 @@ function generateSipFile(){
 function reloadSip(){
 	global $locate;
 	$objResponse = new xajaxResponse();
-	if ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'admin'){
+	if ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 		$myAsterisk = new Asterisk();
 		$myAsterisk->execute("sip reload");
 		$objResponse->addAlert($locate->Translate("sip conf reloaded"));
@@ -202,10 +202,14 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fields[] = 'pin';
 	$fields[] = 'display';
 	$fields[] = 'status';
-	$fields[] = 'creditlimit';
-	$fields[] = 'curcredit';
-	$fields[] = 'limittype';
-	$fields[] = 'credit_clid';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $fields[] = 'creditlimit';
+            $fields[] = 'curcredit';
+            $fields[] = 'limittype';
+            $fields[] = 'credit_clid';
+        }
+        
 	$fields[] = 'groupname';
 	$fields[] = 'resellername';
 	$fields[] = 'isshow';
@@ -225,10 +229,14 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$headers[] = $locate->Translate("Pin")."<br>";
 	$headers[] = $locate->Translate("Display")."<br>";
 	$headers[] = $locate->Translate("Status")."<br>";
-	$headers[] = $locate->Translate("Credit Limit")."<br>";
-	$headers[] = $locate->Translate("Cur Credit")."<br>";
-	$headers[] = $locate->Translate("Limit Type")."<br>";
-	$headers[] = $locate->Translate("Clid Credit")."<br>";
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $headers[] = $locate->Translate("Credit Limit")."<br>";
+            $headers[] = $locate->Translate("Cur Credit")."<br>";
+            $headers[] = $locate->Translate("Limit Type")."<br>";
+            $headers[] = $locate->Translate("Clid Credit")."<br>";
+        }
+        
 	$headers[] = $locate->Translate("Group")."<br>";
 	$headers[] = $locate->Translate("Reseller")."<br>";
 	$headers[] = $locate->Translate("Is Show")."<br>";
@@ -240,10 +248,14 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$attribsHeader[] = 'width=""';
 	$attribsHeader[] = 'width=""';
 	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
-	$attribsHeader[] = 'width=""';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+            $attribsHeader[] = 'width=""';
+        }
+        
 	$attribsHeader[] = 'width=""';
 	$attribsHeader[] = 'width=""';
 	$attribsHeader[] = 'width=""';
@@ -256,10 +268,14 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+            $attribsCols[] = 'style="text-align: left"';
+        }
+        
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
@@ -274,11 +290,15 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","pin","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","display","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","status","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","creditlimit","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","curcredit","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","limittype","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_clid","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","groupname","'.$divName.'","ORDERING");return false;\'';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","creditlimit","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","curcredit","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","limittype","'.$divName.'","ORDERING");return false;\'';
+            $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","credit_clid","'.$divName.'","ORDERING");return false;\'';
+        }
+	
+        $eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","groupname","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","resellername","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","isshow","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","addtime","'.$divName.'","ORDERING");return false;\'';
@@ -289,10 +309,14 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fieldsFromSearch[] = 'pin';
 	$fieldsFromSearch[] = 'display';
 	$fieldsFromSearch[] = 'status';
-	$fieldsFromSearch[] = 'clid.creditlimit';
-	$fieldsFromSearch[] = 'clid.curcredit';
-	$fieldsFromSearch[] = 'clid.limittype';	
-	$fieldsFromSearch[] = 'clid.credit_clid';
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $fieldsFromSearch[] = 'clid.creditlimit';
+            $fieldsFromSearch[] = 'clid.curcredit';
+            $fieldsFromSearch[] = 'clid.limittype';	
+            $fieldsFromSearch[] = 'clid.credit_clid';
+        }
+        
 	$fieldsFromSearch[] = 'groupname';
 	$fieldsFromSearch[] = 'resellername';
 	$fieldsFromSearch[] = 'clid.addtime';
@@ -306,10 +330,14 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$fieldsFromSearchShowAs[] = $locate->Translate("Pin");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Display");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Status");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Credit Limit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Cur credit");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Limit type");
-	$fieldsFromSearchShowAs[] = $locate->Translate("Clid Credit");
+        
+        if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+            $fieldsFromSearchShowAs[] = $locate->Translate("Credit Limit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Cur credit");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Limit type");
+            $fieldsFromSearchShowAs[] = $locate->Translate("Clid Credit");
+        }
+        
 	$fieldsFromSearchShowAs[] = $locate->Translate("Group");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Reseller");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Last Update");
@@ -320,7 +348,7 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 
 	$table->setAttribsCols($attribsCols);	
 
-	if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
+	if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 		$table->setHeader('title',$headers,$attribsHeader,$eventHeader,1,1,0);
 		$table->deleteFlag = '1';//对删除标记进行赋值
 		$table->exportFlag = '1';//对导出标记进行赋值
@@ -363,10 +391,14 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 		$rowc[] = $row['pin'];
 		$rowc[] = $row['display'];
 		$rowc[] = $row['status'];
-		$rowc[] = $row['creditlimit'];
-		$rowc[] = $row['curcredit'];
-		$rowc[] = $row['limittype'];
-		$rowc[] = $row['credit_clid'];
+                
+                if ($_SESSION['curuser']['usertype'] != 'technicaladmin'){
+                    $rowc[] = $row['creditlimit'];
+                    $rowc[] = $row['curcredit'];
+                    $rowc[] = $row['limittype'];
+                    $rowc[] = $row['credit_clid'];
+                }
+                
 		$rowc[] = $row['groupname'];
 		$rowc[] = $row['resellername'];
 		$rowc[] = $locate->Translate($row['isshow']);
@@ -378,7 +410,7 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 			$trstyle = '';
 		}
 		
-		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$table->addRow("clid",$rowc,1,1,0,$divName,$fields,$trstyle);
 		}else{
 			$table->addRow("clid",$rowc,1,0,0,$divName,$fields,$trstyle);

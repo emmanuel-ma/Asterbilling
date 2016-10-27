@@ -103,7 +103,7 @@ require_once('clid.common.php');
 				</td>
 			</tr>
 		</table>
-	<?if ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'admin'){?>
+	<?php if ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){?>
 		<table width="100%" border="0" style="background: #F9F9F9; padding: 0px;">
 			<tr>
 				<td style="padding: 0px;" align="center">
@@ -112,7 +112,7 @@ require_once('clid.common.php');
 				</td>
 			</tr>
 		</table>
-	<?}?>
+	<?php }?>
 		<form name="exportForm" id="exportForm" action="dataexport.php" >
 			<input type="hidden" value="" id="hidSql" name="hidSql" />
 		</form>

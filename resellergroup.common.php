@@ -51,7 +51,7 @@ require_once ('include/localization.class.php');
 
 if ($_SESSION['curuser']['usertype'] == 'clid' || $_SESSION['curuser']['usertype'] == ''){
 	header("Location: index.php");
-}elseif ($_SESSION['curuser']['usertype'] != 'admin') {
+}elseif ($_SESSION['curuser']['usertype'] != 'admin' && $_SESSION['curuser']['usertype'] != 'technicaladmin') {
 	header("Location: systemstatus.php");
 }
 

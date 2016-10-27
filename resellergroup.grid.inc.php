@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * resellergroup.grid.inc.php
 * resellergroup操作类
@@ -369,6 +369,9 @@ class Customer extends astercrm
 	
 	function formAdd(){
 			global $locate,$config;
+                        
+                        $permissionadmin = ($_SESSION['curuser']['usertype'] == 'technicaladmin') ?'style="display: none;"' :'';
+                        
 	$html = '
 			<!-- No edit the next line -->
 			<form method="post" name="f" id="f">
@@ -395,15 +398,15 @@ class Customer extends astercrm
 					</select>
 					</td>
 				</tr>-->
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Credit Limit").'</td>
 					<td align="left"><input type="text" id="creditlimit" name="creditlimit" size="25" maxlength="30"></td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Billsec Multiple").'</td>
 					<td align="left"><input type="text" id="multiple" name="multiple" size="6" maxlength="6" value="1.0000"></td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Limit Type").'</td>
 					<td align="left">
 					<select id="limittype" name="limittype">
@@ -528,6 +531,9 @@ type=peer</textarea></td>
 	function formEdit($id){
 		global $locate,$config;
 		$resellergroup =& Customer::getRecordByID($id,'resellergroup');
+                
+                $permissionadmin = ($_SESSION['curuser']['usertype'] == 'technicaladmin') ?'style="display: none;"' :'';
+                
 		$html = '
 			<!-- No edit the next line -->
 			<form method="post" name="f" id="f">
@@ -562,11 +568,11 @@ type=peer</textarea></td>
 					</select>
 					</td>
 				</tr>-->
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Credit Limit").'</td>
 					<td align="left"><input type="text" id="creditlimit" name="creditlimit" size="25" maxlength="30" value="'.$resellergroup['creditlimit'].'"></td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Cur Credit").'</td>
 					<td align="left">
 						<input type="text" id="curcreditshow" name="curcreditshow" size="15" maxlength="100" value="'.$resellergroup['curcredit'].'" readonly>
@@ -575,7 +581,7 @@ type=peer</textarea></td>
 
 					</td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Operate").'</td>
 					<td align="left">
 						<select id="creditmodtype" name="creditmodtype" onchange="showComment(this)">
@@ -586,7 +592,7 @@ type=peer</textarea></td>
 						<input type="text" id="creditmod" name="creditmod" size="15" maxlength="100" value="" disabled><p>'.$locate->Translate("Comment").' :&nbsp;<input type="text" id="comment" name="comment" size="18" maxlength="20" value="" disabled></p>
 					</td>
 				</tr>
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Limit Type").'</td>
 					<td align="left">
 					<select id="limittype" name="limittype">';
@@ -657,7 +663,7 @@ type=peer</textarea></td>
 				}
 
 				$html .='
-				<tr>
+				<tr '.$permissionadmin.'>
 					<td nowrap align="left">'.$locate->Translate("Billsec Multiple").'</td>
 					<td align="left"><input type="text" id="multiple" name="multiple" size="6" maxlength="6" value="'.$resellergroup['multiple'].'"></td>
 				</tr>

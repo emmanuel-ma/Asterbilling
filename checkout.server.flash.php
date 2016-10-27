@@ -60,19 +60,21 @@
 	$aFormValues['resellerid']=$arr_action[1];
 	$aFormValues['groupid']=$arr_action[2];
 	$aFormValues['sltBooth']=$arr_action[3];
-	$aFormValues['sdate']=$arr_action[4];
-	$aFormValues['edate']=$arr_action[5];
-	$aFormValues['listType']=$arr_action[6];
-	$aFormValues['hidCurpeer']=$arr_action[7];
+        $aFormValues['sltAccount']=$arr_action[4];
+	$aFormValues['sdate']=$arr_action[5];
+	$aFormValues['edate']=$arr_action[6];
+	$aFormValues['listType']=$arr_action[7];
+	$aFormValues['hidCurpeer']=$arr_action[8];
 
 	if ($aFormValues['sltBooth'] == '' && $aFormValues['hidCurpeer'] != ''){
 		$aFormValues['sltBooth'] = $aFormValues['hidCurpeer'];
 	}
-	list ($syear,$smonth,$sday) = split("[ -]",$aFormValues['sdate']);
+        
+	list ($syear,$smonth,$sday) = preg_split("/[ -]/",$aFormValues['sdate']);
 	$syear = (int)$syear;
 	$smonth = (int)$smonth;
 	$sday = (int)$sday;
-	list ($eyear,$emonth,$eday) = split("[ -]",$aFormValues['edate']);
+	list ($eyear,$emonth,$eday) = preg_split("/[ -]/",$aFormValues['edate']);
 	$eyear = (int)$eyear;
 	$emonth = (int)$emonth;
 	$eday = (int)$eday;
@@ -81,7 +83,7 @@
 		$x_title=$locate->Translate("Sum by year");
 		$i=0;
 		for ($year = $syear; $year<=$eyear;$year++){
-			$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], "$year-1-1 00:00:00","$year-12-31 23:59:59");
+			$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$year-1-1 00:00:00","$year-12-31 23:59:59");
 			$x_date[]=''.$year. ' '.$locate->Translate("Year");
 			if ($res->fetchInto($myreport)){
 				$result = parseReport($myreport);
@@ -125,7 +127,7 @@
 			$year = $syear;
 			for ($month = 1;$month<=12;$month++){
 				$x_date[]="".substr($year,-2).','.$month;
-				$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], "$year-$month-1 00:00:00","$year-$month-31 23:59:59");
+				$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$year-$month-1 00:00:00","$year-$month-31 23:59:59");
 				if ($res->fetchInto($myreport)){
 					$result = parseReport($myreport);
 					$ary['recordNum'] = $result['data']['recordNum'];
@@ -166,7 +168,7 @@
 		$x_title=$locate->Translate("Sum by Day");
 		for ($day = $sday;$day<=31;$day++){
 			$x_date[]="".$day;
-			$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], "$syear-$smonth-$day 00:00:00","$syear-$smonth-$day 23:59:59");
+			$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$syear-$smonth-$day 00:00:00","$syear-$smonth-$day 23:59:59");
 			if ($res->fetchInto($myreport)){
 				$result = parseReport($myreport);
 				$ary['recordNum'] = $result['data']['recordNum'];
@@ -209,7 +211,7 @@
 		$x_title=$locate->Translate("Sum by Hour");
 		for ($hour = 0;$hour<=23;$hour++){
 			$x_date[]="".$hour;
-			$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], "$syear-$smonth-$sday $hour:00:00","$syear-$smonth-$sday $hour:59:59");
+			$res = astercc::readReport($aFormValues['resellerid'], $aFormValues['groupid'], $aFormValues['sltBooth'], $aFormValues['sltAccount'], "$syear-$smonth-$sday $hour:00:00","$syear-$smonth-$sday $hour:59:59");
 			if ($res->fetchInto($myreport)){
 				$result = parseReport($myreport);
 				$ary['recordNum'] = $result['data']['recordNum'];

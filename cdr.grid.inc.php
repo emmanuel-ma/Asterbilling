@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * cdr.grid.inc.php
 * cdr操作类
@@ -39,14 +39,21 @@ class Customer extends astercrm
 	*/
 	function &getAllRecords($start, $limit, $order = null, $creby = null, $table='mycdr',$allOrAnswer=null){
 		global $db;
-		if($_SESSION['curuser']['usertype'] == 'admin'){
+		if($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql = "SELECT * FROM ".$table." WHERE (groupid > 0 OR resellerid > '0')";
+                }elseif ( ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0)
+                        || ($_SESSION['curuser']['usertype'] == 'hrsupervisor' && $_SESSION['curuser']['resellerid'] == 0) ) {
+                        $sql = "SELECT * FROM ".$table." WHERE (groupid > 0 OR resellerid > '0') AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			$sql = "SELECT * FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."'";
-		}elseif($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql = "SELECT * FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."'";
+                }elseif( $_SESSION['curuser']['usertype'] == 'supervisor' || $_SESSION['curuser']['usertype'] == 'hrsupervisor' ) {
+                        $sql = "SELECT * FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql = "SELECT * FROM ".$table." WHERE src = '".$_SESSION['curuser']['username']."'";
+		}elseif($_SESSION['curuser']['usertype'] == 'operator'){
+			$sql = "SELECT * FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."' AND accountid = '".$_SESSION['curuser']['userid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}
 		
 		if(!empty($allOrAnswer) && $allOrAnswer == 'answered') {
@@ -89,14 +96,21 @@ class Customer extends astercrm
 			$i++;
 		}
 
-		if($_SESSION['curuser']['usertype'] == 'admin'){
+		if($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql = "SELECT * FROM ".$table." WHERE (groupid > 0 OR resellerid > '0')";
+                }elseif( ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0)
+                        || ($_SESSION['curuser']['usertype'] == 'hrsupervisor' && $_SESSION['curuser']['resellerid'] == 0)) {
+                        $sql = "SELECT * FROM ".$table." WHERE (groupid > 0 OR resellerid > '0') AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			$sql = "SELECT * FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."'";
-		}elseif($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql = "SELECT * FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."'";
+                }elseif( $_SESSION['curuser']['usertype'] == 'supervisor' || $_SESSION['curuser']['usertype'] == 'hrsupervisor' ) {
+                        $sql = "SELECT * FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql = "SELECT * FROM ".$table." WHERE src = '".$_SESSION['curuser']['username']."'";
+		}elseif($_SESSION['curuser']['usertype'] == 'operator'){
+			$sql = "SELECT * FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."' AND accountid = '".$_SESSION['curuser']['userid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}
 
 		if ($joinstr!=''){
@@ -128,14 +142,21 @@ class Customer extends astercrm
 	function &getNumRows($table='mycdr',$allOrAnswer=null){
 		global $db;
 		
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE (groupid > 0 OR resellerid > '0')";
+                }elseif ( ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0) 
+                        || ($_SESSION['curuser']['usertype'] == 'hrsupervisor' && $_SESSION['curuser']['resellerid'] == 0) ) {
+                        $sql .= " SELECT COUNT(*) FROM ".$table." WHERE (groupid > 0 OR resellerid > '0') AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif ($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."'";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."'";
+                }elseif ( $_SESSION['curuser']['usertype'] == 'supervisor' || $_SESSION['curuser']['usertype'] == 'hrsupervisor' ) {
+                        $sql .= " SELECT COUNT(*) FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE src = '".$_SESSION['curuser']['username']."'";
+		}elseif($_SESSION['curuser']['usertype'] == 'operator'){
+			$sql = "SELECT COUNT(*) FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."' AND accountid = '".$_SESSION['curuser']['userid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}
 
 		if(!empty($allOrAnswer) && $allOrAnswer == 'answered') {
@@ -161,14 +182,21 @@ class Customer extends astercrm
 			$i++;
 		}
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE (groupid > '0' OR resellerid > '0')";
+                }elseif ( ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0) 
+                        || ($_SESSION['curuser']['usertype'] == 'hrsupervisor' && $_SESSION['curuser']['resellerid'] == 0) ) {
+                        $sql .= " SELECT COUNT(*) FROM ".$table." WHERE (groupid > '0' OR resellerid > '0') AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif ($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."'";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."'";
+                }elseif ( $_SESSION['curuser']['usertype'] == 'supervisor' || $_SESSION['curuser']['usertype'] == 'hrsupervisor' ) {
+                        $sql .= " SELECT COUNT(*) FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE src = '".$_SESSION['curuser']['username']."'";
+		}elseif($_SESSION['curuser']['usertype'] == 'operator'){
+			$sql = "SELECT COUNT(*) FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."' AND accountid = '".$_SESSION['curuser']['userid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}
 
 		if ($joinstr!=''){
@@ -191,14 +219,21 @@ class Customer extends astercrm
 
 		$joinstr = astercrm::createSqlWithStype($filter,$content,$stype);
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE (groupid > '0' OR resellerid > '0')";
+                }elseif ( ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0) 
+                        || ($_SESSION['curuser']['usertype'] == 'hrsupervisor' && $_SESSION['curuser']['resellerid'] == 0) ) {
+                        $sql .= " SELECT COUNT(*) FROM ".$table." WHERE (groupid > '0' OR resellerid > '0') AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif ($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."'";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."'";
+                }elseif ( $_SESSION['curuser']['usertype'] == 'supervisor' || $_SESSION['curuser']['usertype'] == 'hrsupervisor' ) {
+                        $sql .= " SELECT COUNT(*) FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql .= " SELECT COUNT(*) FROM ".$table." WHERE src = '".$_SESSION['curuser']['username']."'";
+		}elseif($_SESSION['curuser']['usertype'] == 'operator'){
+			$sql = "SELECT COUNT(*) FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."' AND accountid = '".$_SESSION['curuser']['userid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}
 
 		if ($joinstr!=''){
@@ -218,14 +253,21 @@ class Customer extends astercrm
 
 		$joinstr = astercrm::createSqlWithStype($filter,$content,$stype);
 
-		if($_SESSION['curuser']['usertype'] == 'admin'){
+		if($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql = "SELECT * FROM ".$table." WHERE (groupid > '0' OR resellerid > '0')";
+                }elseif( ($_SESSION['curuser']['usertype'] == 'supervisor' && $_SESSION['curuser']['resellerid'] == 0)
+                        || ($_SESSION['curuser']['usertype'] == 'hrsupervisor' && $_SESSION['curuser']['resellerid'] == 0) ) {
+                        $sql = "SELECT * FROM ".$table." WHERE (groupid > '0' OR resellerid > '0') AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'groupadmin'){
 			$sql = "SELECT * FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."'";
-		}elseif($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql = "SELECT * FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."'";
+                }elseif( $_SESSION['curuser']['usertype'] == 'supervisor' || $_SESSION['curuser']['usertype'] == 'hrsupervisor' ) {
+                        $sql = "SELECT * FROM ".$table." WHERE resellerid = '".$_SESSION['curuser']['resellerid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}elseif($_SESSION['curuser']['usertype'] == 'clid'){
 			$sql = "SELECT * FROM ".$table." WHERE src = '".$_SESSION['curuser']['username']."'";
+		}elseif($_SESSION['curuser']['usertype'] == 'operator'){
+			$sql = "SELECT * FROM ".$table." WHERE groupid = '".$_SESSION['curuser']['groupid']."' AND accountid = '".$_SESSION['curuser']['userid']."' AND calldate >= ADDDATE(CURDATE(), -1)";
 		}
 		
 		if ($joinstr!=''){

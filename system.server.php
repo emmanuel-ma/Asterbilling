@@ -43,7 +43,7 @@ function init(){
 function systemAction($type){
 	global $locate;
 	$objResponse = new xajaxResponse();
-	if($_SESSION['curuser']['usertype'] != 'admin') return $objResponse;
+	if($_SESSION['curuser']['usertype'] != 'admin' && $_SESSION['curuser']['usertype'] != 'technicaladmin') return $objResponse;
 
 	$myAsterisk = new Asterisk();
 	if($type == 'reload'){

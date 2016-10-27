@@ -53,8 +53,12 @@ if (!isset($_SESSION['curuser'])){
 	header("Location: index.php");
 }
 
-if ($_SESSION['curuser']['usertype'] != 'admin' && $_SESSION['curuser']['usertype'] != 'reseller' && $_SESSION['curuser']['usertype'] != 'groupadmin') {
-	header("Location: systemstatus.php");
+if ($_SESSION['curuser']['usertype'] != 'admin' && $_SESSION['curuser']['usertype'] != 'reseller' && $_SESSION['curuser']['usertype'] != 'groupadmin' && 
+        $_SESSION['curuser']['usertype'] != 'technicaladmin') {
+    if ($_SESSION['curuser']['usertype'] == 'supervisor' || $_SESSION['curuser']['usertype'] == 'hrsupervisor')
+        header("Location: checkout.php");
+    else
+        header("Location: systemstatus.php");
 }
 
 

@@ -157,10 +157,11 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 		$fields[] = 'id';
 	}
 	$fields[] = 'username';
-	$fields[] = 'password';
+	$fields[] = 'email';
 	$fields[] = 'usertype';
 	$fields[] = 'resellername';
 	$fields[] = 'groupname';
+        //$fields[] = 'password';
 	$fields[] = 'addtime';
 
 	// HTML table: Headers showed
@@ -169,10 +170,11 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 		$headers[] = $locate->Translate("Id");
 	}
 	$headers[] = $locate->Translate("Username");
-	$headers[] = $locate->Translate("Password");
+	$headers[] = $locate->Translate("Email");
 	$headers[] = $locate->Translate("Usertype");
 	$headers[] = $locate->Translate("Reseller");
 	$headers[] = $locate->Translate("Group");
+        //$headers[] = $locate->Translate("Password");
 	$headers[] = $locate->Translate("Last Update");
 
 	// HTML table: hearders attributes
@@ -182,6 +184,7 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	}
 	$attribsHeader[] = 'width="15%"';
 	$attribsHeader[] = 'width="15%"';
+	//$attribsHeader[] = 'width="10%"';
 	$attribsHeader[] = 'width="15%"';
 	$attribsHeader[] = 'width="15%"';
 	$attribsHeader[] = 'width="20%"';
@@ -195,7 +198,8 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
 	$attribsCols[] = 'style="text-align: left"';
-	$attribsCols[] = 'style="text-align: left"';
+        $attribsCols[] = 'style="text-align: left"';
+	//$attribsCols[] = 'style="text-align: left"';
 
 	// HTML Table: If you want ascendent and descendent ordering, set the Header Events.
 	$eventHeader = array();
@@ -203,26 +207,29 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 		$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","id","'.$divName.'","ORDERING");return false;\'';
 	}
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","username","'.$divName.'","ORDERING");return false;\'';
-	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","password","'.$divName.'","ORDERING");return false;\'';
+	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","email","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","usertype","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","resellername","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","groupname","'.$divName.'","ORDERING");return false;\'';
+        //$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","password","'.$divName.'","ORDERING");return false;\'';
 	$eventHeader[]= 'onClick=\'xajax_showGrid(0,'.$limit.',"'.$filter.'","'.$content.'","addtime","'.$divName.'","ORDERING");return false;\'';
 
 	// Select Box: fields table.
 	$fieldsFromSearch = array();
 	$fieldsFromSearch[] = 'username';
-	$fieldsFromSearch[] = 'password';
+	$fieldsFromSearch[] = 'email';
 	$fieldsFromSearch[] = 'usertype';
 	$fieldsFromSearch[] = 'resellername';
+        //$fieldsFromSearch[] = 'password';
 	$fieldsFromSearch[] = 'groupname';
 
 	// Selecct Box: Labels showed on search select box.
 	$fieldsFromSearchShowAs = array();
 	$fieldsFromSearchShowAs[] = $locate->Translate("Username");
-	$fieldsFromSearchShowAs[] = $locate->Translate("password");
+	$fieldsFromSearchShowAs[] = $locate->Translate("Email");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Usertype");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Reseller");
+        //$fieldsFromSearchShowAs[] = $locate->Translate("password");
 	$fieldsFromSearchShowAs[] = $locate->Translate("Group");
 
 
@@ -256,10 +263,11 @@ function createGrid($start = 0, $limit = 1, $filter = null, $content = null, $or
 			}
 		}
 		$rowc[] = $row['username'];
-		$rowc[] = $row['password'];
-		$rowc[] = $row['usertype'];
+		$rowc[] = $row['email'];
+		$rowc[] = $locate->Translate($row['usertype']);
 		$rowc[] = $row['resellername'];
 		$rowc[] = $row['groupname'];
+                //$rowc[] = $row['password'];
 		$rowc[] = $row['addtime'];
 		$table->addRow("account",$rowc,1,1,1,$divName,$fields);
  	}
@@ -305,12 +313,22 @@ function save($f){
 		$f['id'] = intval($local_lastid+1);
 	}
 	
+        if ($f['securepassword'] == 'yes'){
+                $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                $f['password'] = substr(str_shuffle($chars), 0, 8);
+        }
+        
 	$f['username'] = trim($f['username']);
 	$f['password'] = trim($f['password']);
 	if ($f['username'] == '' || $f['password'] == ''){
 		$objResponse->addAlert($locate->Translate("Please enter the username and password"));
 		return $objResponse->getXML();
 	}
+        
+        if ($f['email'] == '' || !filter_var($f['email'], FILTER_VALIDATE_EMAIL)){
+                $objResponse->addAlert($locate->Translate("Please enter a valid email"));
+		return $objResponse->getXML();
+        }
 
 	if ($f['usertype'] == ''){
 		$objResponse->addAlert($locate->Translate("Please select usertype"));
@@ -322,11 +340,11 @@ function save($f){
 		return $objResponse->getXML();
 	}
 
-	if ( ($f['groupid'] == 0 || $f['resellerid'] == 0) && ($f['usertype'] == 'groupadmin' || $f['usertype'] == 'operator') ){
+	if ( ($f['groupid'] == 0 || $f['resellerid'] == 0) && ($f['usertype'] == 'groupadmin') ){
 		$objResponse->addAlert($locate->Translate("Please choose reseller and group"));
 		return $objResponse->getXML();
 	}
-
+        
 	$id = astercrm::checkValues("account","username",$f['username']);
 
 	if($id != ''){
@@ -336,9 +354,30 @@ function save($f){
 	
 	$respOk = Customer::insertNewAccount($f); // add a new account
 	if ($respOk){
+                if ( $f['sendpassword'] == 'yes' ){
+                    $to = $f['email'];
+                    $subject = $locate->Translate("New Password").'...';
+                    $message = '
+                        '.$locate->Translate("Hello").' '.$f['username'].',
+                        
+                        '.$locate->Translate("username").': '.$f['username'].'
+                        '.$locate->Translate("Your new password").': '.$f['password'].'
+                            
+                        '.$locate->Translate("Now you can login with this username and password").'.'.'
+                        
+                        '.$locate->Translate("SuMaTeL Team");
+                    if (mail($to,$subject,$message)){
+                        $msg = $locate->Translate("add account and sent email");
+                    } else {
+                        $msg = $locate->Translate("add account and not sent email");
+                    }
+                } else {
+                    $msg = $locate->Translate("add_account");
+                }
+                
 		$html = createGrid(0,ROWSXPAGE);
 		$objResponse->addAssign("grid", "innerHTML", $html);
-		$objResponse->addAssign("msgZone", "innerHTML", $locate->Translate("add_account"));
+		$objResponse->addAssign("msgZone", "innerHTML", $msg);
 		$objResponse->addAssign("formDiv", "style.visibility", "hidden");
 		$objResponse->addClear("formDiv", "innerHTML");
 	}else{
@@ -358,12 +397,22 @@ function update($f){
 	global $locate,$db;
 	$objResponse = new xajaxResponse();
 
+        if ($f['securepassword'] == 'yes'){
+                $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                $f['password'] = substr(str_shuffle($chars), 0, 8);
+        }
+        
 	$f['username'] = trim($f['username']);
 	$f['password'] = trim($f['password']);
 	if ($f['username'] == '' || $f['password'] == ''){
 		$objResponse->addAlert($locate->Translate("Please enter the username and password"));
 		return $objResponse->getXML();
 	}
+        
+        if ($f['email'] == '' || !filter_var($f['email'], FILTER_VALIDATE_EMAIL)){
+                $objResponse->addAlert($locate->Translate("Please enter a valid email"));
+		return $objResponse->getXML();
+        }
 
 	if ($f['usertype'] == ''){
 		$objResponse->addAlert($locate->Translate("Please select usertype"));
@@ -376,7 +425,7 @@ function update($f){
 	}
 
 
-	if ( ($f['groupid'] == 0 || $f['resellerid'] == 0) && ($f['usertype'] == 'groupadmin' || $f['usertype'] == 'operator') ){
+	if ( ($f['groupid'] == 0 || $f['resellerid'] == 0) && ($f['usertype'] == 'groupadmin') ){
 		$objResponse->addAlert($locate->Translate("Please choose reseller and group"));
 		return $objResponse->getXML();
 	}
@@ -391,9 +440,30 @@ function update($f){
 	$respOk = Customer::updateAccountRecord($f);
 
 	if($respOk){
+                if ( $f['sendpassword'] == 'yes' ){
+                    $to = $f['email'];
+                    $subject = $locate->Translate("New Password").'...';
+                    $message = '
+                        '.$locate->Translate("Hello").' '.$f['username'].',
+                        
+                        '.$locate->Translate("username").': '.$f['username'].'
+                        '.$locate->Translate("Your new password").': '.$f['password'].'
+                            
+                        '.$locate->Translate("Now you can login with this username and password").'.'.'
+                        
+                        '.$locate->Translate("SuMaTeL Team");
+                    if (mail($to,$subject,$message)){
+                        $msg = $locate->Translate("update rec and sent email");
+                    } else {
+                        $msg = $locate->Translate("update rec and not sent email");
+                    }
+                } else {
+                    $msg = $locate->Translate("update_rec");
+                }
+            
 		$html = createGrid(0,ROWSXPAGE);
 		$objResponse->addAssign("grid", "innerHTML", $html);
-		$objResponse->addAssign("msgZone", "innerHTML", $locate->Translate("update_rec"));
+		$objResponse->addAssign("msgZone", "innerHTML", $msg);
 		$objResponse->addAssign("formDiv", "style.visibility", "hidden");
 	}else{
 		$objResponse->addAssign("msgZone", "innerHTML", $locate->Translate("rec_cannot_update"));

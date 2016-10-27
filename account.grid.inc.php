@@ -1,4 +1,4 @@
-<?
+<?php
 /*******************************************************************************
 * account.grid.inc.php
 * account操作类
@@ -47,14 +47,18 @@ class Customer extends astercrm
 		
 		$sql = "SELECT account.*, groupname, resellername FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
-			$sql .= " ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
+			$sql .= " WHERE 1 ";
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " WHERE account.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}else{
 			$sql .= " WHERE groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
 
+                if ($_SESSION['curuser']['usertype'] == 'technicaladmin') {
+                        $sql .= " AND usertype <> 'admin' ";
+                }
+                
 		if($order == null){
 			$sql .= " LIMIT $start, $limit";//.$_SESSION['ordering'];
 		}else{
@@ -91,15 +95,19 @@ class Customer extends astercrm
 			$i++;
 		}
 
-		$sql = "SELECT account.id as id, username, password, usertype, groupname, resellername, account.addtime as addtime FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid WHERE ";
+		$sql = "SELECT account.id as id, username, password, usertype, groupname, resellername, email, account.addtime as addtime FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid WHERE ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " account.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}else{
 			$sql .= " groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
+                
+                if ($_SESSION['curuser']['usertype'] == 'technicaladmin'){
+                        $sql .= " AND usertype <> 'admin' ";
+                }
 
 		if ($joinstr!=''){
 			$joinstr=ltrim($joinstr,'AND'); //去掉最左边的AND
@@ -126,14 +134,17 @@ class Customer extends astercrm
 	function &getNumRows($filter = null, $content = null){
 		global $db;
 		
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
-			$sql .= " SELECT COUNT(*) FROM account ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
+			$sql .= " SELECT COUNT(*) FROM account WHERE 1 ";
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " SELECT COUNT(*) FROM account WHERE resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}else{
 			$sql .= " SELECT COUNT(*) FROM account WHERE groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
 
+                if ($_SESSION['curuser']['usertype'] == 'technicaladmin'){
+                        $sql .= " AND usertype <> 'admin' ";
+                }
 		
 		Customer::events($sql);
 		$res =& $db->getOne($sql);
@@ -156,14 +167,18 @@ class Customer extends astercrm
 
 			$sql = "SELECT COUNT(*) FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid WHERE ";
 
-			if ($_SESSION['curuser']['usertype'] == 'admin'){
-				$sql .= " ";
-			}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+			if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
+				$sql .= " 1 AND ";
+			}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 				$sql .= " account.resellerid = ".$_SESSION['curuser']['resellerid']." AND";
 			}else{
 				$sql .= " groupid = ".$_SESSION['curuser']['groupid']." AND";
 			}
 
+                        if ($_SESSION['curuser']['usertype'] == 'technicaladmin'){
+                                $sql .= " usertype <> 'admin' AND ";
+                        }
+                        
 			if ($joinstr!=''){
 				$joinstr=ltrim($joinstr,'AND'); //去掉最左边的AND
 				$sql .= " ".$joinstr;
@@ -180,16 +195,20 @@ class Customer extends astercrm
 
 		$joinstr = astercrm::createSqlWithStype($filter,$content,$stype);
 
-		$sql = "SELECT account.id as id, username, password, usertype, groupname, resellername, account.addtime as addtime FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid WHERE ";
+		$sql = "SELECT account.id as id, username, password, usertype, groupname, resellername, email, account.addtime as addtime FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid WHERE ";
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$sql .= " 1 ";
-		}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+		}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$sql .= " account.resellerid = ".$_SESSION['curuser']['resellerid']." ";
 		}else{
 			$sql .= " groupid = ".$_SESSION['curuser']['groupid']." ";
 		}
 
+                if ($_SESSION['curuser']['usertype'] == 'technicaladmin'){
+                        $sql .= " AND usertype <> 'admin' ";
+                }
+                
 		if ($joinstr!=''){
 			$joinstr=ltrim($joinstr,'AND'); //去掉最左边的AND
 			$sql .= " AND ".$joinstr."  ";
@@ -211,14 +230,18 @@ class Customer extends astercrm
 
 			$sql = "SELECT COUNT(*) FROM account LEFT JOIN accountgroup ON accountgroup.id = account.groupid LEFT JOIN resellergroup ON resellergroup.id = account.resellerid WHERE ";
 
-			if ($_SESSION['curuser']['usertype'] == 'admin'){
-				$sql .= " ";
-			}elseif ($_SESSION['curuser']['usertype'] == 'reseller'){
+			if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
+				$sql .= " 1 AND ";
+			}elseif ($_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 				$sql .= " account.resellerid = ".$_SESSION['curuser']['resellerid']." AND";
 			}else{
 				$sql .= " groupid = ".$_SESSION['curuser']['groupid']." AND";
 			}
 
+                        if ($_SESSION['curuser']['usertype'] == 'technicaladmin'){
+                                $sql .= " usertype <> 'admin' AND ";
+                        }
+                        
 			if ($joinstr!=''){
 				$joinstr=ltrim($joinstr,'AND'); //去掉最左边的AND
 				$sql .= " ".$joinstr;
@@ -236,7 +259,7 @@ class Customer extends astercrm
 		$reselleroptions = '';
 		$reseller = astercrm::getAll('resellergroup');
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || ($_SESSION['curuser']['usertype'] == 'technicaladmin' && $_SESSION['curuser']['resellerid'] == 0)){
 			$reselleroptions .= '<select id="resellerid" name="resellerid" onchange="setGroup();">';
 			$reselleroptions .= '<option value="0"></option>';
 			while	($reseller->fetchInto($row)){
@@ -261,8 +284,8 @@ class Customer extends astercrm
 		}
 
 		$group = astercrm::getAll('accountgroup','resellerid',$_SESSION['curuser']['resellerid']);
-		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
-			$groupoptions .= '<select id="groupid" name="groupid">';
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
+			$groupoptions .= '<select disabled id="groupid" name="groupid">';
 			$groupoptions .= "<OPTION value='0'></OPTION>";
 			while	($group->fetchInto($row)){
 				if($config['synchronize']['display_synchron_server']){
@@ -294,9 +317,17 @@ class Customer extends astercrm
 					<td nowrap align="left">'.$locate->Translate("username").'</td>
 					<td align="left"><input type="text" id="username" name="username" size="25" maxlength="30"></td>
 				</tr>
+                                <tr>
+					<td nowrap align="left">'.$locate->Translate("email").'</td>
+					<td align="left"><input type="email" id="email" name="email" size="25" maxlength="50"></td>
+				</tr>
 				<tr>
 					<td nowrap align="left">'.$locate->Translate("password").'</td>
-					<td align="left"><input type="text" id="password" name="password" size="25" maxlength="30"></td>
+					<td align="left"><input type="password" id="password" name="password" size="25" maxlength="30"></td>
+				</tr>
+                                <tr>
+                                        <td nowrap align="left"></td>
+					<td align="left" rowspan="1"><input type="checkbox" id="securepassword" name="securepassword" value="yes" checked>'.$locate->Translate("Create secure password").'<br><input type="checkbox" id="sendpassword" name="sendpassword" value="yes" checked>'.$locate->Translate("Send password").'</td>
 				</tr>
 				<tr>
 					<td nowrap align="left">'.$locate->Translate("usertype").'</td>
@@ -308,13 +339,19 @@ class Customer extends astercrm
 							$html .= '<option value="admin">'.$locate->Translate("Admin").'</option>';
 							$html .= '<option value="reseller">'.$locate->Translate("Reseller").'</option>';
 						}
+                                                
+                                                if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
+                                                        $html .= '<option value="technicaladmin">'.$locate->Translate("Technical Admin").'</option>';
+                                                }
 
 						if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
 							$html .= '<option value="groupadmin">'.$locate->Translate("Group Admin").'</option>';
 						}
 
 			$html .= '
-						<option value="operator">'.$locate->Translate("Operator").'</option>
+						<option value="supervisor">'.$locate->Translate("Supervisor").'</option>
+                                                <option value="hrsupervisor">'.$locate->Translate("HRSupervisor").'</option>
+                                                <option value="operator">'.$locate->Translate("Operator").'</option>
 					</select></td>
 				</tr>
 				<tr>
@@ -420,6 +457,15 @@ class Customer extends astercrm
 				}
 				$usertypeoptions .=' >'.$locate->Translate("Reseller").'</option>';
 			}
+                        
+                        if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
+                                $usertypeoptions .= '<option value="technicaladmin"';
+				if($account['usertype'] == 'technicaladmin'){
+					$usertypeoptions .= ' selected ';
+				}
+				$usertypeoptions .=' >'.$locate->Translate("Technical Admin").'</option>';
+                        }
+                            
 
 			if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
 				$usertypeoptions .= '<option value="groupadmin"';
@@ -429,12 +475,24 @@ class Customer extends astercrm
 				$usertypeoptions .=' >'.$locate->Translate("Group Admin").'</option>';
 			}
 
+                        $usertypeoptions .= ' <option value="supervisor"';
+			if($account['usertype'] == 'supervisor'){
+                            $usertypeoptions .= ' selected ';
+			}
+			$usertypeoptions .= '>'.$locate->Translate("Supervisor").'</option>';
+                        
+                        $usertypeoptions .= ' <option value="hrsupervisor"';
+			if($account['usertype'] == 'hrsupervisor'){
+                            $usertypeoptions .= ' selected ';
+			}
+			$usertypeoptions .= '>'.$locate->Translate("HRSupervisor").'</option>';
+                        
 			$usertypeoptions .= ' <option value="operator"';
 				if($account['usertype'] == 'operator'){
 				$usertypeoptions .= ' selected ';
 			}
 			$usertypeoptions .= '>'.$locate->Translate("Operator").'</option>';
-			 
+                        
 			$usertypeoptions .= '</select>';
 		}
 		
@@ -442,7 +500,7 @@ class Customer extends astercrm
 		$reselleroptions = '';
 		$reseller = astercrm::getAll('resellergroup');
 
-		if ($_SESSION['curuser']['usertype'] == 'admin'){
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
 			$reselleroptions .= '<select id="resellerid" name="resellerid" onchange="setGroup();">';
 			$reselleroptions .= '<option value="0"></option>';
 			while	($reseller->fetchInto($row)){
@@ -471,8 +529,8 @@ class Customer extends astercrm
 		}
 
 		$group = astercrm::getAll('accountgroup','resellerid',$account['resellerid']);
-		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller'){
-			$groupoptions .= '<select id="groupid" name="groupid">';
+		if ($_SESSION['curuser']['usertype'] == 'admin' || $_SESSION['curuser']['usertype'] == 'reseller' || $_SESSION['curuser']['usertype'] == 'technicaladmin'){
+			$groupoptions .= '<select disabled id="groupid" name="groupid">';
 			$groupoptions .= "<OPTION value='0'></OPTION>";
 			while	($group->fetchInto($row)){
 				if($config['synchronize']['display_synchron_server']){
@@ -508,9 +566,17 @@ class Customer extends astercrm
 					<td nowrap align="left">'.$locate->Translate("username").'</td>
 					<td align="left"><input type="hidden" id="id" name="id" value="'. $account['id'].'"><input type="text" id="username" name="username" size="25" maxlength="30" value="'.$account['username'].'"></td>
 				</tr>
+                                <tr>
+					<td nowrap align="left">'.$locate->Translate("email").'</td>
+					<td align="left"><input type="email" id="email" name="email" size="25" maxlength="50" value="'.$account['email'].'"></td>
+				</tr>
 				<tr>
 					<td nowrap align="left">'.$locate->Translate("password").'</td>
-					<td align="left"><input type="text" id="password" name="password" size="25" maxlength="30" value="'.$account['password'].'"></td>
+					<td align="left"><input type="password" id="password" name="password" size="25" maxlength="30" value="'.$account['password'].'"></td>
+				</tr>
+                                <tr>
+                                        <td nowrap align="left"></td>
+					<td align="left" rowspan="1"><input type="checkbox" id="securepassword" name="securepassword" value="yes">'.$locate->Translate("Create secure password").'<br><input type="checkbox" id="sendpassword" name="sendpassword" value="yes">'.$locate->Translate("Send password").'</td>
 				</tr>
 				<tr>
 					<td nowrap align="left">'.$locate->Translate("usertype").'</td>
@@ -567,6 +633,10 @@ class Customer extends astercrm
 				<tr>
 					<td nowrap align="left">'.$locate->Translate("username").'</td>
 					<td align="left">'.$account['username'].'</td>
+				</tr>
+                                <tr>
+					<td nowrap align="left">'.$locate->Translate("email").'</td>
+					<td align="left">'.$account['email'].'</td>
 				</tr>
 				<tr>
 					<td nowrap align="left">'.$locate->Translate("password").'</td>
